@@ -31,3 +31,11 @@ scan-base-image:
 		--ignorefile .trivyignore.yaml \
 		--exit-code 1 \
 		--format table ${IMAGE_NAME} 
+
+lint: lint-githubactions
+
+test:
+	echo "Not implemented"
+
+lint-githubactions:
+	actionlint
