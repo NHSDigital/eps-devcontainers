@@ -17,7 +17,7 @@ install-hooks: install-python
 install-hooks:
 build-base-image: generate-language-version-files
 	CONTAINER_NAME=$(CONTAINER_NAME) \
-	devcontainer build \
+	npx devcontainer build \
 		--workspace-folder ./src/base/ \
 		--push false \
 		--image-name "${IMAGE_NAME}"
