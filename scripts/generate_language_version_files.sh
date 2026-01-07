@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Get the current directory of the script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LANGUAGE_VERSIONS_DIR="${SCRIPT_DIR}/../src/base/.devcontainer/language_versions"
+
 # Define repositories to fetch .tool-versions from
 REPOS=(
   "NHSDigital/electronic-prescription-service-clinical-prescription-tracker"
@@ -30,12 +34,13 @@ REPOS=(
 
 
 # Define output files
-NODEJS_FILE="/workspaces/eps-devcontainers/src/base/.devcontainer/language_versions/nodejs-versions.txt"
-PYTHON_FILE="/workspaces/eps-devcontainers/src/base/.devcontainer/language_versions/python-versions.txt"
-JAVA_FILE="/workspaces/eps-devcontainers/src/base/.devcontainer/language_versions/java-versions.txt"
-TERRAFORM_FILE="/workspaces/eps-devcontainers/src/base/.devcontainer/language_versions/terraform-versions.txt"
-GOLANG_FILE="/workspaces/eps-devcontainers/src/base/.devcontainer/language_versions/golang-versions.txt"
-ALL_LANGUAGES_FILE="/workspaces/eps-devcontainers/src/base/.devcontainer/language_versions/language-versions.txt"
+mkdir -p "${LANGUAGE_VERSIONS_DIR}"
+NODEJS_FILE="${LANGUAGE_VERSIONS_DIR}/nodejs-versions.txt"
+PYTHON_FILE="${LANGUAGE_VERSIONS_DIR}/python-versions.txt"
+JAVA_FILE="${LANGUAGE_VERSIONS_DIR}/java-versions.txt"
+TERRAFORM_FILE="${LANGUAGE_VERSIONS_DIR}/terraform-versions.txt"
+GOLANG_FILE="${LANGUAGE_VERSIONS_DIR}/golang-versions.txt"
+ALL_LANGUAGES_FILE="${LANGUAGE_VERSIONS_DIR}/language-versions.txt"
 # Clear existing files
 true > "$NODEJS_FILE"
 true > "$PYTHON_FILE"
