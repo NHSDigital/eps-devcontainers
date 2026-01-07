@@ -75,8 +75,12 @@ jobs:
                 name: eps-devcontainer-base-latest-arm64.img
             - name: Load and push multi-arch image
               run: |
+                  echo "loading images"
                   docker load -i eps-devcontainer-base-latest-amd64.img
                   docker load -i eps-devcontainer-base-latest-arm64.img
+                  echo "pushing images"
+                  docker push ghcr.io/nhsdigital/eps-devcontainer-base:latest-amd64
+                  docker push ghcr.io/nhsdigital/eps-devcontainer-base:latest-arm64
                   echo "creating manifest"
                   docker manifest create ghcr.io/nhsdigital/eps-devcontainer-base:latest \
                     --amend ghcr.io/nhsdigital/eps-devcontainer-base:latest-amd64 \
