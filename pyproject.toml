@@ -1,0 +1,24 @@
+
+[project]
+python = "^3.12"
+name = "eps-devcontainers"
+
+[tool.poetry]
+name = "eps-devcontainers"
+version = "0.0.1-alpha"
+description = "EPS Dev Containers"
+license = "MIT"
+authors = [
+    "EPS"
+]
+readme = "README.md"
+repository = "https://github.com/NHSDigital/eps-devcontainers"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[tool.poetry.scripts]
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.5.1"
