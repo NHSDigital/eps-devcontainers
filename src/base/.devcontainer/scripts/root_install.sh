@@ -14,6 +14,7 @@ rm -rf /var/lib/apt/lists/*
 
 # Add amd64 architecture if on arm64
 if [ "$TARGETARCH" == "arm64" ] || [ "$TARGETARCH" == "aarch64" ]; then 
+    echo "Adding amd64 architecture support"
     dpkg --add-architecture amd64
 fi
 
