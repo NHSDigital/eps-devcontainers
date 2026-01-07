@@ -42,9 +42,9 @@ while IFS= read -r version; do
 done < /tmp/python-versions.txt
 
 # Read Java versions from file and install
-while IFS= read -r version; do 
-    asdf install java "$version"
-done < /tmp/java-versions.txt
+# while IFS= read -r version; do 
+#     asdf install java "$version"
+# done < /tmp/java-versions.txt
 
 # Read Terraform versions from file and install
 while IFS= read -r version; do
