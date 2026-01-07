@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+export DEBIAN_FRONTEND=noninteractive
 
 # Install essential packages first
 apt-get update
@@ -16,14 +17,16 @@ rm -rf /var/lib/apt/lists/*
 if [ "$TARGETARCH" == "arm64" ] || [ "$TARGETARCH" == "aarch64" ]; then 
     echo "Adding amd64 architecture support"
     dpkg --add-architecture amd64
+    echo "Running apt-get update for multi-arch"
+    apt-get update
 fi
 
 # uninstall unnecessary packages
+echo "Removing unnecessary packages"
 apt-get remove -y \
     python3
 # install necessary libraries for asdf and language runtimes
-apt-get update
-export DEBIAN_FRONTEND=noninteractive
+echo "Installing necessary packages"
 apt-get -y install --no-install-recommends htop vim curl git build-essential \
     libffi-dev libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev libbz2-dev \
     zlib1g-dev unixodbc unixodbc-dev libsecret-1-0 libsecret-1-dev libsqlite3-dev \
