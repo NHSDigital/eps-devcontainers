@@ -77,5 +77,9 @@ jobs:
               run: |
                   docker load -i eps-devcontainer-base-latest-amd64.img
                   docker load -i eps-devcontainer-base-latest-arm64.img
-                  docker manifest create ghcr.io/nhsdigital/eps-devcontainer-base:latest ghcr.io/nhsdigital/eps-devcontainer-base:latest-amd64 ghcr.io/nhsdigital/eps-devcontainer-base:latest-arm64
+                  echo "creating manifest"
+                  docker manifest create ghcr.io/nhsdigital/eps-devcontainer-base:latest \
+                    --amend ghcr.io/nhsdigital/eps-devcontainer-base:latest-amd64 \
+                    --amend ghcr.io/nhsdigital/eps-devcontainer-base:latest-arm64
+                  echo "pushing manifest"
                   docker manifest push ghcr.io/nhsdigital/eps-devcontainer-base:latest
