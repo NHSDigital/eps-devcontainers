@@ -18,10 +18,7 @@ fi
 
 echo "Running apt-get update"
 apt-get update
-# uninstall unnecessary packages
-echo "Removing unnecessary packages"
-apt-get remove -y \
-    python3
+
 # install necessary libraries for asdf and language runtimes
 echo "Installing necessary packages"
 apt-get -y install --no-install-recommends htop vim curl git build-essential \
@@ -35,22 +32,22 @@ apt-get -y install --no-install-recommends htop vim curl git build-essential \
 # install aws stuff
 # Download correct AWS CLI for arch
 if [ "$TARGETARCH" = "arm64" ] || [ "$TARGETARCH" == "aarch64" ]; then
-      wget -O /tmp/awscliv2.zip "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip"; \
+      wget -O /tmp/awscliv2.zip --no-verbose "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip"
     else
-      wget -O /tmp/awscliv2.zip "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"; \
+      wget -O /tmp/awscliv2.zip --no-verbose "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
     fi
-    unzip /tmp/awscliv2.zip -d /tmp/aws-cli
+    unzip -q /tmp/awscliv2.zip -d /tmp/aws-cli
     /tmp/aws-cli/aws/install
     rm /tmp/awscliv2.zip
     rm -rf /tmp/aws-cli
 
 # Download correct SAM CLI for arch
 if [ "$TARGETARCH" = "arm64" ] || [ "$TARGETARCH" = "aarch64" ]; then
-      wget -O /tmp/aws-sam-cli.zip "https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-arm64.zip"; \
+      wget -O /tmp/aws-sam-cli.zip --no-verbose "https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-arm64.zip"
     else
-      wget -O /tmp/aws-sam-cli.zip "https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip"; \
+      wget -O /tmp/aws-sam-cli.zip --no-verbose "https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip"
     fi
-    unzip /tmp/aws-sam-cli.zip -d /tmp/aws-sam-cli
+    unzip -q /tmp/aws-sam-cli.zip -d /tmp/aws-sam-cli
     /tmp/aws-sam-cli/install
     rm /tmp/aws-sam-cli.zip
     rm -rf /tmp/aws-sam-cli
@@ -58,9 +55,9 @@ if [ "$TARGETARCH" = "arm64" ] || [ "$TARGETARCH" = "aarch64" ]; then
 # Install ASDF
 ASDF_VERSION=$(awk '!/^#/ && NF {print $1; exit}' /tmp/.tool-versions.asdf)
 if [ "$TARGETARCH" = "arm64" ] || [ "$TARGETARCH" == "aarch64" ]; then
-    wget -O /tmp/asdf.tar.gz "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/asdf-v${ASDF_VERSION}-linux-arm64.tar.gz"; \
+    wget -O /tmp/asdf.tar.gz --no-verbose "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/asdf-v${ASDF_VERSION}-linux-arm64.tar.gz"
 else
-    wget -O /tmp/asdf.tar.gz "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/asdf-v${ASDF_VERSION}-linux-amd64.tar.gz"; \
+    wget -O /tmp/asdf.tar.gz --no-verbose "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/asdf-v${ASDF_VERSION}-linux-amd64.tar.gz"
 fi
 tar -xzf /tmp/asdf.tar.gz -C /tmp
 mkdir -p /usr/bin
