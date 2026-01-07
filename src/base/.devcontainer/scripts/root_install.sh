@@ -2,25 +2,14 @@
 set -e
 export DEBIAN_FRONTEND=noninteractive
 
-# Install essential packages first
-apt-get update
-apt-get install -y \
-    curl \
-    wget \
-    git \
-    sudo \
-    unzip
-apt-get clean
-rm -rf /var/lib/apt/lists/*
-
 # Add amd64 architecture if on arm64
 if [ "$TARGETARCH" == "arm64" ] || [ "$TARGETARCH" == "aarch64" ]; then 
     echo "Adding amd64 architecture support"
     dpkg --add-architecture amd64
-    echo "Running apt-get update for multi-arch"
-    apt-get update
 fi
 
+echo "Running apt-get update"
+apt-get update
 # uninstall unnecessary packages
 echo "Removing unnecessary packages"
 apt-get remove -y \
