@@ -24,7 +24,6 @@ apt-get remove -y \
 # install necessary libraries for asdf and language runtimes
 apt-get update
 export DEBIAN_FRONTEND=noninteractive
-apt-get -y dist-upgrade
 apt-get -y install --no-install-recommends htop vim curl git build-essential \
     libffi-dev libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev libbz2-dev \
     zlib1g-dev unixodbc unixodbc-dev libsecret-1-0 libsecret-1-dev libsqlite3-dev \
