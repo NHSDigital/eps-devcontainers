@@ -6,6 +6,14 @@ export DEBIAN_FRONTEND=noninteractive
 if [ "$TARGETARCH" == "arm64" ] || [ "$TARGETARCH" == "aarch64" ]; then 
     echo "Adding amd64 architecture support"
     dpkg --add-architecture amd64
+
+    # Update sources.list to include amd64 repositories
+    echo "Configuring sources.list for amd64 and arm64"
+    sed -i.bak '/^deb / s|http://ports.ubuntu.com/ubuntu-ports|[arch=arm64] http://ports.ubuntu.com/ubuntu-ports|' /etc/apt/sources.list
+    # shellcheck disable=SC2129
+    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu jammy main universe" >> /etc/apt/sources.list
+    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu jammy-updates main universe" >> /etc/apt/sources.list
+    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu jammy-security main universe" >> /etc/apt/sources.list
 fi
 
 echo "Running apt-get update"
