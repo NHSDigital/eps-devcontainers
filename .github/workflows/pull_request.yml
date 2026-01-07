@@ -93,5 +93,5 @@ jobs:
 
 
   package_docker_image:
-    needs: [get_issue_number, quality_checks, get_commit_id]
+    needs: [get_issue_number, get_commit_id]
     uses: ./.github/workflows/build_multi_arch_image.yml

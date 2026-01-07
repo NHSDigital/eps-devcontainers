@@ -20,6 +20,7 @@ build-base-image: generate-language-version-files
 	npx devcontainer build \
 		--workspace-folder ./src/base/ \
 		--push false \
+		--platform linux/${ARCHITECTURE} \
 		--image-name "${IMAGE_NAME}"
 
 generate-language-version-files:
