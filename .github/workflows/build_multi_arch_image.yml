@@ -1,0 +1,35 @@
+name: Build and push docker image
+
+on:
+    workflow_call:
+
+jobs:
+    build_image:
+        permissions:
+            id-token: write
+        runs-on: ${{ matrix.runner }}
+        strategy:
+            matrix:
+                include:
+                    - arch: amd64
+                      runner: ubuntu-22.04
+                    - arch: arm64
+                      runner: ubuntu-22.04-arm
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v5
+              with:
+                  fetch-depth: 0
+
+            - name: Build container
+              run: |
+                  make build-base-image
+                  docker tag ghcr.io/nhsdigital/eps-devcontainer-base:latest ghcr.io/nhsdigital/eps-devcontainer-base:latest-${{ matrix.arch }}
+                  docker save "ghcr.io/nhsdigital/eps-devcontainer-base:latest-${{ matrix.arch }}" -o eps-devcontainer-base-latest-${{ matrix.arch }}.img
+
+            - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+              name: Upload docker images
+              with:
+                name: eps-devcontainer-base-latest-${{ matrix.arch }}.img
+                path: |
+                    eps-devcontainer-base-latest-${{ matrix.arch }}.img
