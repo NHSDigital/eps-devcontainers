@@ -55,6 +55,16 @@ jobs:
           attestations: write
           id-token: write
         steps:
+            - name: Free Disk Space for Docker
+              uses: endersonmenezes/free-disk-space@e6ed9b02e683a3b55ed0252f1ee469ce3b39a885
+              with:
+                remove_android: true
+                remove_dotnet: true
+                remove_haskell: true
+                remove_tool_cache: true
+                rm_cmd: "rm"
+                remove_packages: "azure-cli google-cloud-cli microsoft-edge-stable google-chrome-stable firefox postgresql* temurin-* *llvm* mysql* dotnet-sdk-*"
+                remove_packages_one_command: true
             - name: Download amd64 images
               uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
               with:
