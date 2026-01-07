@@ -26,7 +26,8 @@ jobs:
                   make build-base-image
                   docker tag ghcr.io/nhsdigital/eps-devcontainer-base:latest ghcr.io/nhsdigital/eps-devcontainer-base:latest-${{ matrix.arch }}
                   docker save "ghcr.io/nhsdigital/eps-devcontainer-base:latest-${{ matrix.arch }}" -o eps-devcontainer-base-latest-${{ matrix.arch }}.img
-
+              env:
+                 GH_TOKEN: ${{ github.token }}
             - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
               name: Upload docker images
               with:
