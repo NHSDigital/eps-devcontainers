@@ -35,7 +35,7 @@ jobs:
               run: |
                   make build-base-image
                   docker tag ghcr.io/nhsdigital/eps-devcontainer-base:latest ghcr.io/nhsdigital/eps-devcontainers:latest-${{ matrix.arch }}
-                  docker save "ghcr.io/nhsdigital/eps-devcontainer-base:latest-${{ matrix.arch }}" -o eps-devcontainer-base-latest-${{ matrix.arch }}.img
+                  docker save "ghcr.io/nhsdigital/eps-devcontainers:latest-${{ matrix.arch }}" -o eps-devcontainer-base-latest-${{ matrix.arch }}.img
               env:
                  GH_TOKEN: ${{ github.token }}
                  ARCHITECTURE: ${{ matrix.arch }}
