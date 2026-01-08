@@ -34,7 +34,7 @@ jobs:
             - name: Build container
               run: |
                   make build-base-image
-                  docker tag ghcr.io/nhsdigital/eps-devcontainer-base:latest ghcr.io/nhsdigital/eps-devcontainer-base:latest-${{ matrix.arch }}
+                  docker tag ghcr.io/nhsdigital/eps-devcontainer-base:latest ghcr.io/nhsdigital/eps-devcontainers:latest-${{ matrix.arch }}
                   docker save "ghcr.io/nhsdigital/eps-devcontainer-base:latest-${{ matrix.arch }}" -o eps-devcontainer-base-latest-${{ matrix.arch }}.img
               env:
                  GH_TOKEN: ${{ github.token }}
@@ -79,11 +79,11 @@ jobs:
                   docker load -i eps-devcontainer-base-latest-amd64.img
                   docker load -i eps-devcontainer-base-latest-arm64.img
                   echo "pushing images"
-                  docker push ghcr.io/nhsdigital/eps-devcontainer-base:latest-amd64
-                  docker push ghcr.io/nhsdigital/eps-devcontainer-base:latest-arm64
+                  docker push ghcr.io/nhsdigital/eps-devcontainers:latest-amd64
+                  docker push ghcr.io/nhsdigital/eps-devcontainers:latest-arm64
                   echo "creating manifest"
-                  docker manifest create ghcr.io/nhsdigital/eps-devcontainer-base:latest \
-                    --amend ghcr.io/nhsdigital/eps-devcontainer-base:latest-amd64 \
-                    --amend ghcr.io/nhsdigital/eps-devcontainer-base:latest-arm64
+                  docker manifest create ghcr.io/nhsdigital/eps-devcontainers:latest \
+                    --amend ghcr.io/nhsdigital/eps-devcontainers:latest-amd64 \
+                    --amend ghcr.io/nhsdigital/eps-devcontainers:latest-arm64
                   echo "pushing manifest"
-                  docker manifest push ghcr.io/nhsdigital/eps-devcontainer-base:latest
+                  docker manifest push ghcr.io/nhsdigital/eps-devcontainers:latest
