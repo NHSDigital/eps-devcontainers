@@ -75,6 +75,7 @@ jobs:
                 name: eps-devcontainer-base-latest-arm64.img
             - name: Load and push multi-arch image
               run: |
+                  echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
                   echo "loading images"
                   docker load -i eps-devcontainer-base-latest-amd64.img
                   docker load -i eps-devcontainer-base-latest-arm64.img
