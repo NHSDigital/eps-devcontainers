@@ -18,6 +18,7 @@ fi
 
 echo "Running apt-get update"
 apt-get update
+apt-get upgrade -y
 
 # install necessary libraries for asdf and language runtimes
 echo "Installing necessary packages"

@@ -5,12 +5,17 @@ name: Build and push docker image
       publish_image:
         required: true
         type: boolean
+      docker_tag:
+        required: true
+        type: string
+
 jobs:
   build_image:
     permissions:
       id-token: write
     runs-on: '${{ matrix.runner }}'
     strategy:
+      fail-fast: false
       matrix:
         include:
           - arch: amd64
@@ -33,12 +38,13 @@ jobs:
         run: >
           make build-base-image
 
-          docker tag ghcr.io/nhsdigital/eps-devcontainer-base:latest "ghcr.io/nhsdigital/eps-devcontainers:latest-${ARCHITECTURE}"
+          docker tag ghcr.io/nhsdigital/eps-devcontainer-base:latest "ghcr.io/nhsdigital/eps-devcontainers:{DOCKER_TAG}-${ARCHITECTURE}"
 
           docker save "ghcr.io/nhsdigital/eps-devcontainers:latest-${ARCHITECTURE}" -o "eps-devcontainer-base-latest-${ARCHITECTURE}.img"
         env:
           GH_TOKEN: '${{ github.token }}'
           ARCHITECTURE: '${{ matrix.arch }}'
+          DOCKER_TAG: '${{ inputs.docker_tag }}'
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         name: Upload docker images
         with:
@@ -49,7 +55,7 @@ jobs:
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
         with:
           scan-type: "image"
-          image-ref:  "ghcr.io/nhsdigital/eps-devcontainers:latest-${{ matrix.arch }}"
+          image-ref:  "ghcr.io/nhsdigital/eps-devcontainers:${{ inputs.docker_tag }}-${{ matrix.arch }}"
           severity: "CRITICAL,HIGH"
           scanners: "vuln"
           vuln-type: "os,library"
@@ -61,7 +67,7 @@ jobs:
       - name: Show docker vulnerability output
         if: always()
         run: |
-          echo "Scan output for ghcr.io/nhsdigital/eps-devcontainers:latest-${ARCHITECTURE}"
+          echo "Scan output for ghcr.io/nhsdigital/eps-devcontainers:${{ inputs.docker_tag }}-${ARCHITECTURE}"
           if [ -f dependency_results_docker.txt ]; then
             cat dependency_results_docker.txt
           fi
@@ -102,26 +108,33 @@ jobs:
           name: eps-devcontainer-base-latest-arm64.img
       - name: Load and push multi-arch image
         run: >
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{
-          github.actor }} --password-stdin
-
+          echo "${GITHUB_TOKEN}" | docker login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
           echo "loading images"
-
           docker load -i eps-devcontainer-base-latest-amd64.img
-
           docker load -i eps-devcontainer-base-latest-arm64.img
 
+          echo "Tagging latest images"
+          docker tag "ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}-amd64" "ghcr.io/nhsdigital/eps-devcontainers:latest-amd64"
+          docker tag "ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}-arm64" "ghcr.io/nhsdigital/eps-devcontainers:latest-arm64"
+
           echo "pushing images"
-
+          docker push "ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}-amd64"
+          docker push "ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}-arm64"
           docker push ghcr.io/nhsdigital/eps-devcontainers:latest-amd64
-
           docker push ghcr.io/nhsdigital/eps-devcontainers:latest-arm64
 
           echo "creating manifest"
+          docker manifest create "ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}" \
+            --amend "ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}-amd64" \
+            --amend "ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}-arm64"
+          docker manifest create "ghcr.io/nhsdigital/eps-devcontainers:latest" \
+            --amend "ghcr.io/nhsdigital/eps-devcontainers:latest-amd64" \
+            --amend "ghcr.io/nhsdigital/eps-devcontainers:latest-arm64"
 
-          docker manifest create ghcr.io/nhsdigital/eps-devcontainers:latest \
-            --amend ghcr.io/nhsdigital/eps-devcontainers:latest-amd64 \
-            --amend ghcr.io/nhsdigital/eps-devcontainers:latest-arm64
           echo "pushing manifest"
-
-          docker manifest push ghcr.io/nhsdigital/eps-devcontainers:latest
+          docker manifest push "ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}"
+          docker manifest push "ghcr.io/nhsdigital/eps-devcontainers:latest"
+        env:
+          DOCKER_TAG: '${{ inputs.docker_tag }}'
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          GITHUB_ACTOR: '${{ github.actor }}'

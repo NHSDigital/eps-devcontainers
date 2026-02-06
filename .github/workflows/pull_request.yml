@@ -86,5 +86,9 @@ jobs:
           echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
   package_docker_image:
     uses: ./.github/workflows/build_multi_arch_image.yml
+    needs:
+      - get_issue_number
+      - get_commit_id
     with:
       publish_image: false
+      docker_tag: 'pr${{ needs.get_issue_number.outputs.issue_number }}-${{ needs.get_commit_id.outputs.sha_short }}'
