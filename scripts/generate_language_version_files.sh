@@ -25,8 +25,6 @@ REPOS=(
   "NHSDigital/nhs-fhir-middy-error-handler"
   "NHSDigital/nhs-eps-spine-client"
   "NHSDigital/electronic-prescription-service-api-regression-tests"
-  "NHSDigital/eps-action-sbom"
-  "NHSDigital/eps-action-cfn-lint"
   "NHSDigital/eps-common-workflows"
   "NHSDigital/eps-storage-terraform"
   "NHSDigital/eps-spine-shared"
