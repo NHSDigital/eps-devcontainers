@@ -51,7 +51,7 @@ jobs:
 
           docker tag ghcr.io/nhsdigital/eps-devcontainer-base:latest "ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}-${ARCHITECTURE}"
 
-          docker save "ghcr.io/nhsdigital/eps-devcontainers:latest-${ARCHITECTURE}" -o "eps-devcontainer-base-latest-${ARCHITECTURE}.img"
+          docker save "ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}-${ARCHITECTURE}" -o "eps-devcontainer-base-${DOCKER_TAG}-${ARCHITECTURE}.img"
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
           ARCHITECTURE: '${{ matrix.arch }}'
@@ -60,9 +60,9 @@ jobs:
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         name: Upload docker images
         with:
-          name: "eps-devcontainer-base-latest-${{ matrix.arch }}.img"
+          name: "eps-devcontainer-base-${{ inputs.docker_tag }}-${{ matrix.arch }}.img"
           path: |
-            eps-devcontainer-base-latest-${{ matrix.arch }}.img
+            eps-devcontainer-base-${{ inputs.docker_tag }}-${{ matrix.arch }}.img
       - name: Check docker vulnerabilities
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
         with:
@@ -79,12 +79,13 @@ jobs:
       - name: Show docker vulnerability output
         if: always()
         run: |
-          echo "Scan output for ghcr.io/nhsdigital/eps-devcontainers:${{ inputs.docker_tag }}-${ARCHITECTURE}"
+          echo "Scan output for ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}-${ARCHITECTURE}"
           if [ -f dependency_results_docker.txt ]; then
             cat dependency_results_docker.txt
           fi
         env:
           ARCHITECTURE: '${{ matrix.arch }}'
+          DOCKER_TAG: '${{ inputs.docker_tag }}'
 
   publish_image:
     needs: build_image
@@ -113,17 +114,17 @@ jobs:
       - name: Download amd64 images
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
-          name: eps-devcontainer-base-latest-amd64.img
+          name: eps-devcontainer-base-${{ inputs.docker_tag }}-amd64.img
       - name: Download arm64 images
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
-          name: eps-devcontainer-base-latest-arm64.img
+          name: eps-devcontainer-base-${{ inputs.docker_tag }}-arm64.img
       - name: Load and push multi-arch image
         run: >
           echo "${GITHUB_TOKEN}" | docker login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
           echo "loading images"
-          docker load -i eps-devcontainer-base-latest-amd64.img
-          docker load -i eps-devcontainer-base-latest-arm64.img
+          docker load -i "eps-devcontainer-base-${DOCKER_TAG}-amd64.img"
+          docker load -i "eps-devcontainer-base-${DOCKER_TAG}-arm64.img"
 
           echo "Tagging latest images"
           docker tag "ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}-amd64" "ghcr.io/nhsdigital/eps-devcontainers:latest-amd64"
