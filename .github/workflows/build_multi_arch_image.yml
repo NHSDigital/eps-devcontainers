@@ -31,6 +31,14 @@ jobs:
         uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
         with:
           node-version-file: .tool-versions
+      - name: Generate a token to get details from other repositories
+        id: generate-token
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf
+        with:
+          app-id: ${{ vars.EPS_REPO_STATUS_APP_ID }}
+          private-key: ${{ secrets.EPS_REPO_STATUS_PEM }}
+          owner: "NHSDigital"
+  
       - name: make install
         run: |
           make install-node
@@ -45,6 +53,7 @@ jobs:
           GH_TOKEN: '${{ github.token }}'
           ARCHITECTURE: '${{ matrix.arch }}'
           DOCKER_TAG: '${{ inputs.docker_tag }}'
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         name: Upload docker images
         with:

@@ -1,35 +1,28 @@
 #!/usr/bin/env bash
+set -e
 
 # Get the current directory of the script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LANGUAGE_VERSIONS_DIR="${SCRIPT_DIR}/../src/base/.devcontainer/language_versions"
 
-# Define repositories to fetch .tool-versions from
-REPOS=(
-  "NHSDigital/electronic-prescription-service-clinical-prescription-tracker"
-  "NHSDigital/prescriptionsforpatients"
-  "NHSDigital/prescriptions-for-patients"
-  "NHSDigital/electronic-prescription-service-api"
-  "NHSDigital/electronic-prescription-service-release-notes"
-  "NHSDigital/electronic-prescription-service-account-resources"
-  "NHSDigital/eps-prescription-status-update-api"
-  "NHSDigital/eps-FHIR-validator-lambda"
-  "NHSDigital/eps-load-test"
-  "NHSDigital/eps-prescription-tracker-ui"
-  "NHSDigital/eps-aws-dashboards"
-  "NHSDigital/eps-cdk-utils"
-  "NHSDigital/eps-vpc-resources"
-  "NHSDigital/eps-assist-me"
-  "NHSDigital/validation-service-fhir-r4"
-  "NHSDigital/electronic-prescription-service-get-secrets"
-  "NHSDigital/nhs-fhir-middy-error-handler"
-  "NHSDigital/nhs-eps-spine-client"
-  "NHSDigital/electronic-prescription-service-api-regression-tests"
-  "NHSDigital/eps-common-workflows"
-  "NHSDigital/eps-storage-terraform"
-  "NHSDigital/eps-spine-shared"
-)
+# Check if the user is logged in with GitHub CLI
+if ! gh auth status > /dev/null 2>&1; then
+  echo "You are not logged in to GitHub CLI. Initiating login..."
+  gh auth login
+fi
 
+# Fetch the repos.json file from the eps-repo-status repository using GitHub CLI
+REPOS_JSON_PATH="repos/NHSDigital/eps-repo-status/contents/packages/get_repo_status/app/repos.json"
+TEMP_REPOS_JSON="/tmp/repos.json"
+
+# Download the repos.json file
+if ! gh api -H 'Accept: application/vnd.github.v3.raw' "$REPOS_JSON_PATH" > "$TEMP_REPOS_JSON"; then
+  echo "Failed to fetch repos.json using GitHub CLI. Exiting."
+  exit 1
+fi
+
+# Parse the repoUrl values from the JSON file
+mapfile -t REPOS < <(jq -r '.[].repoUrl' "$TEMP_REPOS_JSON")
 
 # Define output files
 mkdir -p "${LANGUAGE_VERSIONS_DIR}"
