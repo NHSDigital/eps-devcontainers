@@ -151,9 +151,16 @@ jobs:
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: eps-devcontainer-base-${{ inputs.docker_tag }}-arm64.img
+      - name: Login to github container registry
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        with:
+              registry: ghcr.io
+              username: ${{github.actor}}
+              password: ${{secrets.GITHUB_TOKEN}}
+
+
       - name: Load and push multi-arch image
         run: >
-          echo "${GITHUB_TOKEN}" | docker login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
           echo "loading images"
           docker load -i "eps-devcontainer-base-${DOCKER_TAG}-amd64.img"
           docker load -i "eps-devcontainer-base-${DOCKER_TAG}-arm64.img"
@@ -180,6 +187,4 @@ jobs:
           docker manifest push "ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}"
           docker manifest push "ghcr.io/nhsdigital/eps-devcontainers:latest"
         env:
-          DOCKER_TAG: '${{ inputs.docker_tag }}'
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-          GITHUB_ACTOR: '${{ github.actor }}'
+          DOCKER_TAG: ${{ inputs.docker_tag }}
