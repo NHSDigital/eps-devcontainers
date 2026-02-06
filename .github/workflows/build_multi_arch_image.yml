@@ -53,7 +53,7 @@ jobs:
 
           docker save "ghcr.io/nhsdigital/eps-devcontainers:latest-${ARCHITECTURE}" -o "eps-devcontainer-base-latest-${ARCHITECTURE}.img"
         env:
-          GH_TOKEN: '${{ github.token }}'
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
           ARCHITECTURE: '${{ matrix.arch }}'
           DOCKER_TAG: '${{ inputs.docker_tag }}'
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
