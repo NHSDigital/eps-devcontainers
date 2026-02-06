@@ -86,7 +86,7 @@ jobs:
           scanners: "vuln"
           vuln-type: "os,library"
           format: "json"
-          output: "scan_results_docker_${{ matrix.arch }}.json"
+          output: "scan_results_docker.json"
           exit-code: "0"
           trivy-config: trivy.yaml
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
@@ -94,7 +94,7 @@ jobs:
         with:
           name: "scan_results_docker_${{ matrix.arch }}.json"
           path: |
-            "scan_results_docker_${{ matrix.arch }}.json"
+            "scan_results_docker.json"
       - name: Check docker vulnerabilities - table output
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
         with:

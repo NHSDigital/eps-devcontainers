@@ -29,7 +29,8 @@ Install asdf versions of node, python, java, terraform, golang used by all EPS p
 Install and setup git-secrets
 
 # Project structure
-The dev container is defined in src/base/.devcontainer folder. This folder contains a Dockerfile and a devcontainer.json file which is used to build the container
+The dev container is defined in src/base/.devcontainer folder. This folder contains a Dockerfile and a devcontainer.json file which is used to build the container.   
+As part of the dockerfile, there are scripts in the scripts folder that run as root and vscode user that setup and install various programs.
 
 The dev container is built using https://github.com/devcontainers/cli
 
