@@ -30,6 +30,7 @@ scan-base-image:
 	trivy image \
 		--severity HIGH,CRITICAL \
 		--ignorefile .trivyignore.yaml \
+		--scanners vuln \
 		--exit-code 1 \
 		--format table ${IMAGE_NAME} 
 

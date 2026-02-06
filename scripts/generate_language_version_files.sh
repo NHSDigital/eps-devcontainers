@@ -12,7 +12,7 @@ if ! gh auth status > /dev/null 2>&1; then
 fi
 
 # Fetch the repos.json file from the eps-repo-status repository using GitHub CLI
-REPOS_JSON_PATH="repos/NHSDigital/eps-repo-status/contents/packages/get_repo_status/app/repos.json"
+REPOS_JSON_PATH="repos/NHSDigital/eps-repo-status/contents/repos.json"
 TEMP_REPOS_JSON="/tmp/repos.json"
 
 # Download the repos.json file
