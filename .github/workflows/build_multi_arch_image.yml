@@ -160,7 +160,7 @@ jobs:
 
 
       - name: Load and push multi-arch image
-        run: >
+        run: |
           echo "loading images"
           docker load -i "eps-devcontainer-base-${DOCKER_TAG}-amd64.img"
           docker load -i "eps-devcontainer-base-${DOCKER_TAG}-arm64.img"
