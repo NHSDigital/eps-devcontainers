@@ -90,7 +90,7 @@ jobs:
       - get_issue_number
       - get_commit_id
     with:
-      publish_image: false
+      publish_image: true
       docker_tag: 'pr${{ needs.get_issue_number.outputs.issue_number }}-${{ needs.get_commit_id.outputs.sha_short }}'
     secrets:
       EPS_REPO_STATUS_PEM: ${{ secrets.EPS_REPO_STATUS_PEM }}
