@@ -469,3 +469,28 @@ vulnerabilities:
     purls:
       - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-168.178?arch=amd64\u0026distro=ubuntu-22.04"
     expired_at: 2026-06-01
+  - id: CVE-2024-35870
+    statement: "kernel: smb: client: fix UAF in smb2_reconnect_server()"
+    purls:
+      - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-168.178?arch=arm64\u0026distro=ubuntu-22.04"
+    expired_at: 2026-06-01
+  - id: CVE-2024-53179
+    statement: "kernel: smb: client: fix use-after-free of signing key"
+    purls:
+      - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-168.178?arch=arm64\u0026distro=ubuntu-22.04"
+    expired_at: 2026-06-01
+  - id: CVE-2025-21780
+    statement: "kernel: drm/amdgpu: avoid buffer overflow attach in smu_sys_set_pp_table() "
+    purls:
+      - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-168.178?arch=arm64\u0026distro=ubuntu-22.04"
+    expired_at: 2026-06-01
+  - id: CVE-2025-37899
+    statement: "kernel: ksmbd: fix use-after-free in session logoff"
+    purls:
+      - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-168.178?arch=arm64\u0026distro=ubuntu-22.04"
+    expired_at: 2026-06-01
+  - id: CVE-2025-38118
+    statement: "kernel: Linux kernel: Bluetooth MGMT use-after-free vulnerability allows privilege escalation"
+    purls:
+      - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-168.178?arch=arm64\u0026distro=ubuntu-22.04"
+    expired_at: 2026-06-01
