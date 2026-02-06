@@ -77,7 +77,25 @@ jobs:
           name: "eps-devcontainer-base-${{ inputs.docker_tag }}-${{ matrix.arch }}.img"
           path: |
             eps-devcontainer-base-${{ inputs.docker_tag }}-${{ matrix.arch }}.img
-      - name: Check docker vulnerabilities
+      - name: Check docker vulnerabilities - json output
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
+        with:
+          scan-type: "image"
+          image-ref:  "ghcr.io/nhsdigital/eps-devcontainers:${{ inputs.docker_tag }}-${{ matrix.arch }}"
+          severity: "CRITICAL,HIGH"
+          scanners: "vuln"
+          vuln-type: "os,library"
+          format: "json"
+          output: "scan_results_docker_${{ matrix.arch }}.json"
+          exit-code: "0"
+          trivy-config: trivy.yaml
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        name: Upload scan results
+        with:
+          name: "scan_results_docker_${{ matrix.arch }}.json"
+          path: |
+            "scan_results_docker_${{ matrix.arch }}.json"
+      - name: Check docker vulnerabilities - table output
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
         with:
           scan-type: "image"
@@ -86,7 +104,7 @@ jobs:
           scanners: "vuln"
           vuln-type: "os,library"
           format: "table"
-          output: "dependency_results_docker.txt"
+          output: "scan_results_docker.txt"
           exit-code: "1"
           trivy-config: trivy.yaml
 
@@ -94,8 +112,8 @@ jobs:
         if: always()
         run: |
           echo "Scan output for ghcr.io/nhsdigital/eps-devcontainers:${DOCKER_TAG}-${ARCHITECTURE}"
-          if [ -f dependency_results_docker.txt ]; then
-            cat dependency_results_docker.txt
+          if [ -f scan_results_docker.txt ]; then
+            cat scan_results_docker.txt
           fi
         env:
           ARCHITECTURE: '${{ matrix.arch }}'
