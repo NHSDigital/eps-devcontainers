@@ -45,3 +45,5 @@ jobs:
     with:
       publish_image: true
       docker_tag: '${{ needs.tag_release.outputs.version_tag }}'
+    secrets:
+      EPS_REPO_STATUS_PEM: ${{ secrets.EPS_REPO_STATUS_PEM }}

@@ -8,6 +8,9 @@ name: Build and push docker image
       docker_tag:
         required: true
         type: string
+    secrets:
+      EPS_REPO_STATUS_PEM:
+        required: true
 
 jobs:
   build_image:
