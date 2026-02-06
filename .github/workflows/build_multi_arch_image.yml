@@ -26,6 +26,20 @@ jobs:
           - arch: arm64
             runner: ubuntu-22.04-arm
     steps:
+      - name: Free Disk Space for Docker
+        uses: >-
+          endersonmenezes/free-disk-space@e6ed9b02e683a3b55ed0252f1ee469ce3b39a885
+        with:
+          remove_android: true
+          remove_dotnet: true
+          remove_haskell: true
+          remove_tool_cache: true
+          rm_cmd: rm
+          remove_packages: >-
+            azure-cli google-cloud-cli microsoft-edge-stable
+            google-chrome-stable firefox postgresql* temurin-* *llvm* mysql*
+            dotnet-sdk-*
+          remove_packages_one_command: true
       - name: Checkout code
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
