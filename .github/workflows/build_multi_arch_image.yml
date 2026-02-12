@@ -53,12 +53,19 @@ jobs:
         run: |
           make install-node
       - name: Build container
-        run: >
+        run: |
           make build-image
-
           docker tag "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest" "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}"
-
           docker save "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}" -o "eps-devcontainer-${CONTAINER_NAME}-${DOCKER_TAG}-${ARCHITECTURE}.img"
+
+          # create combined trivy ignore file for use in trivy scan, combining common and specific ignore files if they exist
+          combined="src/${CONTAINER_NAME}/.trivyignore_combined.yaml"
+          common="src/common/.trivyignore.yaml"
+          specific="src/${CONTAINER_NAME}/.trivyignore.yaml"
+          echo "vulnerabilities:" > "$combined"
+          if [ -f "$common" ]; then sed -n '2,$p' "$common" >> "$combined"; fi
+          if [ -f "$specific" ]; then sed -n '2,$p' "$specific" >> "$combined"; fi
+
         env:
           ARCHITECTURE: '${{ matrix.arch }}'
           DOCKER_TAG: '${{ inputs.docker_tag }}'
@@ -81,15 +88,11 @@ jobs:
           format: "json"
           output: "scan_results_docker.json"
           exit-code: "0"
-          trivy-config: trivy.yaml
-      - name: find scan results
-        run: |
-          ls -lart
-          find . -name "scan_results_docker.json"
+          trivy-config: src/${{ inputs.container_name }}/trivy.yaml
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         name: Upload scan results
         with:
-          name: "scan_results_docker_${{ matrix.arch }}.json"
+          name: "scan_results_docker_${{ inputs.container_name }}_${{ matrix.arch }}.json"
           path: scan_results_docker.json
       - name: Check docker vulnerabilities - table output
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
@@ -102,7 +105,7 @@ jobs:
           format: "table"
           output: "scan_results_docker.txt"
           exit-code: "1"
-          trivy-config: trivy.yaml
+          trivy-config: src/${{ inputs.container_name }}/trivy.yaml
 
       - name: Show docker vulnerability output
         if: always()

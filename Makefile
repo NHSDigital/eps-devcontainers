@@ -24,9 +24,15 @@ build-image: guard-CONTAINER_NAME guard-BASE_VERSION
 		--image-name "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 
 
 scan-image: guard-CONTAINER_NAME
+	@combined="src/$${CONTAINER_NAME}/.trivyignore_combined.yaml"; \
+	common="src/common/.trivyignore.yaml"; \
+	specific="src/$${CONTAINER_NAME}/.trivyignore.yaml"; \
+	echo "vulnerabilities:" > "$$combined"; \
+	if [ -f "$$common" ]; then sed -n '2,$$p' "$$common" >> "$$combined"; fi; \
+	if [ -f "$$specific" ]; then sed -n '2,$$p' "$$specific" >> "$$combined"; fi
 	trivy image \
 		--severity HIGH,CRITICAL \
-		--ignorefile .trivyignore.yaml \
+		--config src/${CONTAINER_NAME}/trivy.yaml \
 		--scanners vuln \
 		--exit-code 1 \
 		--format table "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 

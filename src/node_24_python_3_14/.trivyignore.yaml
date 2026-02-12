@@ -1,0 +1,28 @@
+vulnerabilities:
+  - id: CVE-2024-35870
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2024-53179
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2025-37849
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2025-37899
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2025-38118
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2026-26007
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2026-24842
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2026-23949
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2026-24049
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
