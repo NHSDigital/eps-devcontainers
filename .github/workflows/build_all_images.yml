@@ -26,6 +26,7 @@ jobs:
         include:
           - container_name: node_24_python_3_14
           - container_name: node_24_python_3_13
+          - container_name: node_24_python_3_12
     uses: ./.github/workflows/build_multi_arch_image.yml
     with:
       tag_latest: ${{ inputs.tag_latest }}
