@@ -1,5 +1,9 @@
 CONTAINER_PREFIX=ghcr.io/nhsdigital/eps-devcontainers/
 
+ifneq ($(strip $(PLATFORM)),)
+PLATFORM_FLAG=--platform $(PLATFORM)
+endif
+
 guard-%:
 	@ if [ "${${*}}" = "" ]; then \
 		echo "Environment variable $* not set"; \
@@ -17,10 +21,11 @@ install-node:
 install-hooks: install-python
 	poetry run pre-commit install --install-hooks --overwrite
 
-build-image: guard-CONTAINER_NAME guard-BASE_VERSION
+build-image: guard-CONTAINER_NAME guard-BASE_VERSION guard-PLATFORM
 	npx devcontainer build \
 		--workspace-folder ./src/$${CONTAINER_NAME}/ \
 		--push false \
+		--platform $${PLATFORM} \
 		--image-name "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 
 
 scan-image: guard-CONTAINER_NAME

@@ -72,6 +72,7 @@ jobs:
           DOCKER_TAG: '${{ inputs.docker_tag }}'
           CONTAINER_NAME: '${{ inputs.container_name }}'
           BASE_VERSION: ${{ inputs.docker_tag}}
+          PLATFORM: linux/${{ matrix.arch }}
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         name: Upload combined trivy ignore file
         with:
