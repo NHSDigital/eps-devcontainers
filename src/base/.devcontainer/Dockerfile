@@ -22,3 +22,4 @@ COPY .tool-versions.asdf /home/vscode/.tool-versions.asdf
 COPY .tool-versions /home/vscode/.tool-versions
 
 RUN ./vscode_install.sh
+WORKDIR /home/vscode

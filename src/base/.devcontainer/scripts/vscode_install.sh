@@ -13,17 +13,10 @@ echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc
 echo 'export PATH="$HOME/gems/bin:$PATH"' >> ~/.bashrc
 
 # Install ASDF plugins
-asdf plugin add python
-asdf plugin add poetry https://github.com/asdf-community/asdf-poetry.git
 asdf plugin add shellcheck https://github.com/luizm/asdf-shellcheck.git
-asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
 asdf plugin add direnv
 asdf plugin add actionlint
 asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
-asdf plugin add java
-asdf plugin add maven
-asdf plugin add golang https://github.com/kennyp/asdf-golang.git
-asdf plugin add golangci-lint https://github.com/hypnoglow/asdf-golangci-lint.git
 asdf plugin add terraform https://github.com/asdf-community/asdf-hashicorp.git
 asdf plugin add trivy https://github.com/zufardhiyaulhaq/asdf-trivy.git
 

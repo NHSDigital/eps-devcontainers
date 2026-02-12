@@ -17,7 +17,6 @@ install-node:
 install-hooks: install-python
 	poetry run pre-commit install --install-hooks --overwrite
 
-install-hooks:
 build-image: guard-CONTAINER_NAME
 	npx devcontainer build \
 		--workspace-folder ./src/$${CONTAINER_NAME}/ \
