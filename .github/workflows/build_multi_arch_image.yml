@@ -14,6 +14,7 @@ name: Build and push docker image
 
 jobs:
   build_image:
+    name: Build image for ${{ inputs.container_name }}
     permissions:
       id-token: write
     runs-on: '${{ matrix.runner }}'
@@ -115,7 +116,7 @@ jobs:
           DOCKER_TAG: '${{ inputs.docker_tag }}'
 
   publish_image:
-    needs: build_image
+    name: Publish image for ${{ inputs.container_name }}
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -124,8 +125,7 @@ jobs:
       id-token: write
     steps:
       - name: Free Disk Space for Docker
-        uses: >-
-          endersonmenezes/free-disk-space@e6ed9b02e683a3b55ed0252f1ee469ce3b39a885
+        uses: endersonmenezes/free-disk-space@e6ed9b02e683a3b55ed0252f1ee469ce3b39a885
         with:
           remove_android: true
           remove_dotnet: true
