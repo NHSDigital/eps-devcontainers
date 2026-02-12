@@ -1,4 +1,6 @@
-FROM ghcr.io/nhsdigital/eps-devcontainers/base:latest
+ARG BASE_VERSION=latest
+
+FROM ghcr.io/nhsdigital/eps-devcontainers/base:${BASE_VERSION}
 
 # common Dockerfile used to setup poetry after installing python
 

@@ -43,6 +43,6 @@ jobs:
     needs: tag_release
     uses: ./.github/workflows/build_multi_arch_image.yml
     with:
-      publish_image: true
+      tag_latest: true
       docker_tag: '${{ needs.tag_release.outputs.version_tag }}'
       container_name: base
