@@ -32,16 +32,16 @@ apt-get -y install --no-install-recommends htop vim curl git build-essential \
 
 # install aws stuff
 # Download correct AWS CLI for arch
-echo "Installing aws cli"
-if [ "$TARGETARCH" = "arm64" ] || [ "$TARGETARCH" == "aarch64" ]; then
-      wget -O /tmp/awscliv2.zip --no-verbose "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip"
-    else
-      wget -O /tmp/awscliv2.zip --no-verbose "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
-    fi
-    unzip -q /tmp/awscliv2.zip -d /tmp/aws-cli
-    /tmp/aws-cli/aws/install
-    rm /tmp/awscliv2.zip
-    rm -rf /tmp/aws-cli
+# echo "Installing aws cli"
+# if [ "$TARGETARCH" = "arm64" ] || [ "$TARGETARCH" == "aarch64" ]; then
+#       wget -O /tmp/awscliv2.zip --no-verbose "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip"
+#     else
+#       wget -O /tmp/awscliv2.zip --no-verbose "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+#     fi
+#     unzip -q /tmp/awscliv2.zip -d /tmp/aws-cli
+#     /tmp/aws-cli/aws/install
+#     rm /tmp/awscliv2.zip
+#     rm -rf /tmp/aws-cli
 
 # Download correct SAM CLI for arch
 echo "Installing aws-sam cli"

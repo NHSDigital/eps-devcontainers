@@ -15,16 +15,13 @@ install-hooks: install-python
 	poetry run pre-commit install --install-hooks --overwrite
 
 install-hooks:
-build-base-image: generate-language-version-files
+build-base-image:
 	CONTAINER_NAME=$(CONTAINER_NAME) \
 	npx devcontainer build \
 		--workspace-folder ./src/base/ \
 		--push false \
 		--platform linux/${ARCHITECTURE} \
 		--image-name "${IMAGE_NAME}"
-
-generate-language-version-files:
-	./scripts/generate_language_version_files.sh
 
 scan-base-image:
 	trivy image \

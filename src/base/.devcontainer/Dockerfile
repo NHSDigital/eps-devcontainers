@@ -20,10 +20,5 @@ ENV PATH="/home/vscode/.asdf/shims/:$PATH"
 WORKDIR ${SCRIPTS_DIR}/${CONTAINER_NAME}
 COPY .tool-versions.asdf /home/vscode/.tool-versions.asdf
 COPY .tool-versions /home/vscode/.tool-versions
-COPY language_versions/nodejs-versions.txt /tmp/nodejs-versions.txt
-COPY language_versions/python-versions.txt /tmp/python-versions.txt
-COPY language_versions/java-versions.txt /tmp/java-versions.txt
-COPY language_versions/terraform-versions.txt /tmp/terraform-versions.txt
-COPY language_versions/golang-versions.txt /tmp/golang-versions.txt
 
 RUN ./vscode_install.sh

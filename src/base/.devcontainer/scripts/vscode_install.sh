@@ -31,31 +31,6 @@ asdf plugin add trivy https://github.com/zufardhiyaulhaq/asdf-trivy.git
 cd /home/vscode
 asdf install
 
-# Read Node.js versions from file and install
-while IFS= read -r version; do
-    asdf install nodejs "$version"
-done < /tmp/nodejs-versions.txt
-
-# Read Python versions from file and install
-while IFS= read -r version; do
-    asdf install python "$version"
-done < /tmp/python-versions.txt
-
-# Read Java versions from file and install
-# while IFS= read -r version; do 
-#     asdf install java "$version"
-# done < /tmp/java-versions.txt
-
-# Read Terraform versions from file and install
-while IFS= read -r version; do
-    asdf install terraform "$version"
-done < /tmp/terraform-versions.txt
-
-# Read Golang versions from file and install
-while IFS= read -r version; do
-    asdf install golang "$version"
-done < /tmp/golang-versions.txt
-
 # setup gitsecrets
 git-secrets --register-aws --global
 git-secrets --add-provider --global -- cat /usr/share/secrets-scanner/nhsd-rules-deny.txt
