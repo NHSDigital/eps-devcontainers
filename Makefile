@@ -37,6 +37,11 @@ scan-image: guard-CONTAINER_NAME
 		--exit-code 1 \
 		--format table "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 
 
+shell-image: guard-CONTAINER_NAME
+	docker run -it \
+	"${CONTAINER_PREFIX}$${CONTAINER_NAME}"  \
+	bash
+
 lint: lint-githubactions
 
 test:

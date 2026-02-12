@@ -6,20 +6,15 @@
     "build": {
       "dockerfile": "../../common/Dockerfile",
       "args": {
-        "BASE_VERSION": "${localEnv:BASE_VERSION}"
-      }
+        "BASE_VERSION": "${localEnv:BASE_VERSION}",
+        "CONTAINER_NAME": "eps_devcontainer_node_24_python_3_13"
+      },
+      "context": "."
     },
     "runArgs": [
       "--network=host"
     ],
     "remoteEnv": { "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}" },
-    "features": {
-      "ghcr.io/devcontainers/features/node:1": {
-        "version": "24.13.1"
-      },
-      "ghcr.io/devcontainers/features/python:1": {
-        "version": "3.13.12"
-      }
-    }
+    "features": {}
   }
   

@@ -5,7 +5,9 @@
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
     "build": {
       "dockerfile": "Dockerfile",
-      "args": {}
+      "args": {
+        "CONTAINER_NAME": "eps_devcontainer_base"
+      }
     },
     "runArgs": [
       "--network=host"

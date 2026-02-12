@@ -31,3 +31,16 @@ jobs:
       tag_latest: ${{ inputs.tag_latest }}
       docker_tag: ${{ inputs.docker_tag }}
       container_name: ${{ matrix.container_name }}
+  package_product_docker_image:
+    needs:
+      - package_non_base_docker_image
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - container_name: cpt_api
+    uses: ./.github/workflows/build_multi_arch_image.yml
+    with:
+      tag_latest: ${{ inputs.tag_latest }}
+      docker_tag: ${{ inputs.docker_tag }}
+      container_name: ${{ matrix.container_name }}

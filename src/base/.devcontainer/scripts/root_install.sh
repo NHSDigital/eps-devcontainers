@@ -30,19 +30,6 @@ apt-get -y install --no-install-recommends htop vim curl git build-essential \
     libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev \
     xz-utils tk-dev liblzma-dev netcat-traditional libyaml-dev uuid-runtime xxd unzip
 
-# install aws stuff
-# Download correct AWS CLI for arch
-# echo "Installing aws cli"
-# if [ "$TARGETARCH" = "arm64" ] || [ "$TARGETARCH" == "aarch64" ]; then
-#       wget -O /tmp/awscliv2.zip --no-verbose "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip"
-#     else
-#       wget -O /tmp/awscliv2.zip --no-verbose "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
-#     fi
-#     unzip -q /tmp/awscliv2.zip -d /tmp/aws-cli
-#     /tmp/aws-cli/aws/install
-#     rm /tmp/awscliv2.zip
-#     rm -rf /tmp/aws-cli
-
 # Download correct SAM CLI for arch
 echo "Installing aws-sam cli"
 if [ "$TARGETARCH" = "arm64" ] || [ "$TARGETARCH" = "aarch64" ]; then
@@ -57,7 +44,7 @@ if [ "$TARGETARCH" = "arm64" ] || [ "$TARGETARCH" = "aarch64" ]; then
 
 # Install ASDF
 echo "Installing asdf"
-ASDF_VERSION=$(awk '!/^#/ && NF {print $1; exit}' /tmp/.tool-versions.asdf)
+ASDF_VERSION=$(awk '!/^#/ && NF {print $1; exit}' "${SCRIPTS_DIR}/${CONTAINER_NAME}/.tool-versions.asdf")
 if [ "$TARGETARCH" = "arm64" ] || [ "$TARGETARCH" == "aarch64" ]; then
     wget -O /tmp/asdf.tar.gz --no-verbose "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/asdf-v${ASDF_VERSION}-linux-arm64.tar.gz"
 else
