@@ -56,7 +56,7 @@ jobs:
         run: >
           make build-image
 
-          docker tag "ghcr.io/nhsdigital/eps-devcontainers-${CONTAINER_NAME}:latest" "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}"
+          docker tag "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest" "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}"
 
           docker save "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}" -o "eps-devcontainer-${CONTAINER_NAME}-${DOCKER_TAG}-${ARCHITECTURE}.img"
         env:
