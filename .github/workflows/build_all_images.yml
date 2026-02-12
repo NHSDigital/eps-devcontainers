@@ -1,0 +1,36 @@
+name: build_all_images
+'on':
+  workflow_call:
+    inputs:
+      docker_tag:
+        required: true
+        type: string
+      tag_latest:
+        required: true
+        type: boolean
+env:
+  BRANCH_NAME: '${{ github.event.pull_request.head.ref }}'
+jobs:
+  package_base_docker_image:
+    uses: ./.github/workflows/build_multi_arch_image.yml
+    with:
+      tag_latest: ${{ inputs.tag_latest }}
+      docker_tag: ${{ inputs.docker_tag }}
+      container_name: base
+  package_non_base_docker_image:
+    runs-on: ubuntu-22.04
+    needs:
+      - package_base_docker_image
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - container_name: node_24_python_3_14
+          - container_name: node_24_python_3_13
+    steps:
+      - name: build
+        uses: ./.github/workflows/build_multi_arch_image.yml
+        with:
+          tag_latest: ${{ inputs.tag_latest }}
+          docker_tag: ${{ inputs.docker_tag }}
+          container_name: ${{ matrix.container_name }}

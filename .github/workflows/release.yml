@@ -39,10 +39,9 @@ jobs:
       branch_name: main
       tag_format: ${{ needs.get_asdf_version.outputs.tag_format }}
     secrets: inherit
-  package_docker_image:
+  build_all_images:
     needs: tag_release
-    uses: ./.github/workflows/build_multi_arch_image.yml
-    with:
-      tag_latest: true
+    uses: ./.github/workflows/build_all_images.yml 
+    with: 
       docker_tag: '${{ needs.tag_release.outputs.version_tag }}'
-      container_name: base
+      tag_latest: true
