@@ -89,8 +89,7 @@ jobs:
         name: Upload scan results
         with:
           name: "scan_results_docker_${{ matrix.arch }}.json"
-          path: |
-            "scan_results_docker.json"
+          path: scan_results_docker.json
       - name: Check docker vulnerabilities - table output
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
         with:
