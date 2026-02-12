@@ -1,28 +1,21 @@
 vulnerabilities:
-  - id: CVE-2024-35870
-    statement: "CHANGE ME"
-    expired_at: 2026-06-01
-  - id: CVE-2024-53179
-    statement: "CHANGE ME"
-    expired_at: 2026-06-01
-  - id: CVE-2025-37849
-    statement: "CHANGE ME"
-    expired_at: 2026-06-01
-  - id: CVE-2025-37899
-    statement: "CHANGE ME"
-    expired_at: 2026-06-01
-  - id: CVE-2025-38118
-    statement: "CHANGE ME"
-    expired_at: 2026-06-01
-  - id: CVE-2026-26007
-    statement: "CHANGE ME"
-    expired_at: 2026-06-01
+  - id: CVE-2026-25547
+    statement: "brace-expansion: brace-expansion: Denial of Service via unbounded brace range expansion"
+    purls:
+      - "pkg:npm/%40isaacs/brace-expansion@5.0.0"
+    expired_at: 2026-08-12
   - id: CVE-2026-24842
-    statement: "CHANGE ME"
-    expired_at: 2026-06-01
+    statement: "node-tar: tar: node-tar: Arbitrary file creation via path traversal bypass in hardlink security check"
+    purls:
+      - "pkg:npm/tar@7.5.4"
+    expired_at: 2026-08-12
   - id: CVE-2026-23949
-    statement: "CHANGE ME"
-    expired_at: 2026-06-01
+    statement: "jaraco.context: jaraco.context: Path traversal via malicious tar archives"
+    purls:
+      - "pkg:pypi/jaraco.context@5.3.0"
+    expired_at: 2026-08-12
   - id: CVE-2026-24049
-    statement: "CHANGE ME"
-    expired_at: 2026-06-01
+    statement: "wheel: wheel: Privilege Escalation or Arbitrary Code Execution via malicious wheel file unpacking"
+    purls:
+      - "pkg:pypi/wheel@0.45.1"
+    expired_at: 2026-08-12
