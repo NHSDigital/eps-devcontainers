@@ -1,0 +1,16 @@
+vulnerabilities:
+  - id: CVE-2022-40897
+    statement: "pypa-setuptools: Regular Expression Denial of Service (ReDoS) in package_index.py"
+    purls:
+      - "pkg:pypi/setuptools@65.5.0"
+    expired_at: 2026-08-12
+  - id: CVE-2024-6345
+    statement: "pypa/setuptools: Remote code execution via download functions in the package_index module in pypa/setuptools"
+    purls:
+      - "pkg:pypi/setuptools@65.5.0"
+    expired_at: 2026-08-12
+  - id: CVE-2025-47273
+    statement: "setuptools: Path Traversal Vulnerability in setuptools PackageIndex"
+    purls:
+      - "pkg:pypi/setuptools@65.5.0"
+    expired_at: 2026-08-12
