@@ -527,3 +527,16 @@ vulnerabilities:
   - id: CVE-2026-24049
     statement: "CHANGE ME"
     expired_at: 2026-06-01
+
+  - id: CVE-2022-25235
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2022-25236
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2022-26485
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2022-26486
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
