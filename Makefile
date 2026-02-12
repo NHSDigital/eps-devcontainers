@@ -29,7 +29,7 @@ scan-image: guard-CONTAINER_NAME
 		--ignorefile .trivyignore.yaml \
 		--scanners vuln \
 		--exit-code 1 \
-		--format table "${CONTAINER_PREFIX}/$${CONTAINER_NAME}" 
+		--format table "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 
 
 lint: lint-githubactions
 
