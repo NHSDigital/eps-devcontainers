@@ -118,6 +118,7 @@ jobs:
   publish_image:
     name: Publish image for ${{ inputs.container_name }}
     runs-on: ubuntu-22.04
+    needs: build_image
     permissions:
       contents: read
       packages: write
