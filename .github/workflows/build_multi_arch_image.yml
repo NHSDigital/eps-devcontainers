@@ -14,7 +14,7 @@ name: Build and push docker image
 
 jobs:
   build_image:
-    name: Build image for ${{ inputs.container_name }}
+    name: Build image for ${{ inputs.container_name }} on ${{ matrix.arch }}
     permissions:
       id-token: write
     runs-on: '${{ matrix.runner }}'
