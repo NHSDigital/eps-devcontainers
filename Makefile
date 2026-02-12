@@ -1,7 +1,10 @@
-CONTAINER_PREFIX=ghcr.io/nhsdigital/eps-devcontainer-
-CONTAINER_NAME=base
-IMAGE_NAME=${CONTAINER_PREFIX}$(CONTAINER_NAME)
-WORKSPACE_FOLDER=.
+CONTAINER_PREFIX=ghcr.io/nhsdigital/eps-devcontainers-
+
+guard-%:
+	@ if [ "${${*}}" = "" ]; then \
+		echo "Environment variable $* not set"; \
+		exit 1; \
+	fi
 
 install: install-python install-node install-hooks
 
@@ -15,21 +18,19 @@ install-hooks: install-python
 	poetry run pre-commit install --install-hooks --overwrite
 
 install-hooks:
-build-base-image:
-	CONTAINER_NAME=$(CONTAINER_NAME) \
+build-image: guard-CONTAINER_NAME
 	npx devcontainer build \
-		--workspace-folder ./src/base/ \
+		--workspace-folder ./src/$${CONTAINER_NAME}/ \
 		--push false \
-		--platform linux/${ARCHITECTURE} \
-		--image-name "${IMAGE_NAME}"
+		--image-name "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 
 
-scan-base-image:
+scan-image: guard-CONTAINER_NAME
 	trivy image \
 		--severity HIGH,CRITICAL \
 		--ignorefile .trivyignore.yaml \
 		--scanners vuln \
 		--exit-code 1 \
-		--format table ${IMAGE_NAME} 
+		--format table "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 
 
 lint: lint-githubactions
 

@@ -494,3 +494,27 @@ vulnerabilities:
     purls:
       - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-168.178?arch=arm64\u0026distro=ubuntu-22.04"
     expired_at: 2026-06-01
+  - id: CVE-2025-68121
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2025-61730
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2024-35870
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2024-53179
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2025-37849
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2025-37899
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2025-38118
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
+  - id: CVE-2026-26007
+    statement: "CHANGE ME"
+    expired_at: 2026-06-01
