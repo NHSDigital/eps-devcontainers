@@ -65,12 +65,18 @@ jobs:
           echo "vulnerabilities:" > "$combined"
           if [ -f "$common" ]; then sed -n '2,$p' "$common" >> "$combined"; fi
           if [ -f "$specific" ]; then sed -n '2,$p' "$specific" >> "$combined"; fi
+          echo "Combined trivy ignore file created at $combined"
 
         env:
           ARCHITECTURE: '${{ matrix.arch }}'
           DOCKER_TAG: '${{ inputs.docker_tag }}'
           CONTAINER_NAME: '${{ inputs.container_name }}'
           BASE_VERSION: ${{ inputs.docker_tag}}
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        name: Upload combined trivy ignore file
+        with:
+          name: "trivyigonre-${{ inputs.container_name }}-${{ matrix.arch }}"
+          path: src/${{ inputs.container_name}}/.trivyignore_combined.yaml
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         name: Upload docker images
         with:
