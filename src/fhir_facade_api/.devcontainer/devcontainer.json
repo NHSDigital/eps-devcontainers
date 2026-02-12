@@ -7,7 +7,7 @@
       "dockerfile": "Dockerfile",
       "args": {
         "BASE_VERSION": "${localEnv:BASE_VERSION}",
-        "CONTAINER_NAME": "cpt_api"
+        "CONTAINER_NAME": "fhir_facade_api"
       },
       "context": "."
     },

@@ -38,7 +38,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - container_name: cpt_api
+          - container_name: fhir_facade_api
     uses: ./.github/workflows/build_multi_arch_image.yml
     with:
       tag_latest: ${{ inputs.tag_latest }}
