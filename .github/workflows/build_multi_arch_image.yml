@@ -27,8 +27,7 @@ jobs:
             runner: ubuntu-22.04-arm
     steps:
       - name: Free Disk Space for Docker
-        uses: >-
-          endersonmenezes/free-disk-space@e6ed9b02e683a3b55ed0252f1ee469ce3b39a885
+        uses: endersonmenezes/free-disk-space@e6ed9b02e683a3b55ed0252f1ee469ce3b39a885
         with:
           remove_android: true
           remove_dotnet: true
@@ -82,6 +81,10 @@ jobs:
           output: "scan_results_docker.json"
           exit-code: "0"
           trivy-config: trivy.yaml
+      - name: find scan results
+        run: |
+          ls -lart
+          find . -name "scan_results_docker.json"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         name: Upload scan results
         with:
