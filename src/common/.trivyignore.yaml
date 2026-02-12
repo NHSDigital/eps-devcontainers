@@ -277,3 +277,28 @@ vulnerabilities:
     purls:
       - "pkg:golang/github.com/containerd/containerd/v2@v2.1.4"
     expired_at: 2026-08-12
+  - id: CVE-2024-35870
+    statement: "kernel: smb: client: fix UAF in smb2_reconnect_server()"
+    purls:
+      - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-170.180?arch=arm64&distro=ubuntu-22.04"
+    expired_at: 2026-08-12
+  - id: CVE-2024-53179
+    statement: "kernel: smb: client: fix use-after-free of signing key"
+    purls:
+      - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-170.180?arch=arm64&distro=ubuntu-22.04"
+    expired_at: 2026-08-12
+  - id: CVE-2025-37849
+    statement: "kernel: KVM: arm64: Tear down vGIC on failed vCPU creation"
+    purls:
+      - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-170.180?arch=arm64&distro=ubuntu-22.04"
+    expired_at: 2026-08-12
+  - id: CVE-2025-37899
+    statement: "kernel: ksmbd: fix use-after-free in session logoff"
+    purls:
+      - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-170.180?arch=arm64&distro=ubuntu-22.04"
+    expired_at: 2026-08-12
+  - id: CVE-2025-38118
+    statement: "kernel: Linux kernel: Bluetooth MGMT use-after-free vulnerability allows privilege escalation"
+    purls:
+      - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-170.180?arch=arm64&distro=ubuntu-22.04"
+    expired_at: 2026-08-12
