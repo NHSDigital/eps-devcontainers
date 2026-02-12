@@ -91,7 +91,7 @@ jobs:
       - get_commit_id
     with:
       tag_latest: false
-      docker_tag: 'pr${{ needs.get_issue_number.outputs.issue_number }}-${{ needs.get_commit_id.outputs.sha_short }}'
+      docker_tag: 'pr-${{ needs.get_issue_number.outputs.issue_number }}-${{ needs.get_commit_id.outputs.sha_short }}'
       container_name: base
   package_node_24_python_3_14_docker_image:
     uses: ./.github/workflows/build_multi_arch_image.yml
@@ -101,5 +101,5 @@ jobs:
       - package_base_docker_image
     with:
       tag_latest: false
-      docker_tag: 'pr${{ needs.get_issue_number.outputs.issue_number }}-${{ needs.get_commit_id.outputs.sha_short }}'
+      docker_tag: 'pr-${{ needs.get_issue_number.outputs.issue_number }}-${{ needs.get_commit_id.outputs.sha_short }}'
       container_name: node_24_python_3_14
