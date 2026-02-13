@@ -78,7 +78,7 @@ jobs:
             shopt -s nullglob
             imgs=(eps-devcontainer-*.img)
             if [ ${#imgs[@]} -eq 0 ]; then
-            echo "No images found to load."
+              echo "No images found to load."
             else
             for img in "${imgs[@]}"; do
               echo "Loading image from $img..."
