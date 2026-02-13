@@ -22,3 +22,6 @@ RUN cat /tmp/.tool-versions >> /home/vscode/.tool-versions
 
 RUN ./vscode_install.sh
 WORKDIR /home/vscode
+
+# need to finish as root
+USER root
