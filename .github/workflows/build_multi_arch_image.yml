@@ -88,7 +88,7 @@ jobs:
           IMAGE_TAG: ":${{ inputs.docker_tag }}-${{ matrix.arch }}"
           BASE_FOLDER: "${{ inputs.base_folder }}"
       - name: Check docker vulnerabilities - json output
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
+        uses: aquasecurity/trivy-action@c1824fd6edce30d7ab345a9989de00bbd46ef284
         with:
           scan-type: "image"
           image-ref:  "ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}:${{ inputs.docker_tag }}-${{ matrix.arch }}"
@@ -105,7 +105,7 @@ jobs:
           name: "scan_results_docker_${{ inputs.container_name }}_${{ matrix.arch }}.json"
           path: scan_results_docker.json
       - name: Check docker vulnerabilities - table output
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
+        uses: aquasecurity/trivy-action@c1824fd6edce30d7ab345a9989de00bbd46ef284
         with:
           scan-type: "image"
           image-ref:  "ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}:${{ inputs.docker_tag }}-${{ matrix.arch }}"
