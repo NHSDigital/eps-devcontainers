@@ -83,6 +83,7 @@ jobs:
             for img in "${imgs[@]}"; do
               echo "Loading image from $img..."
               docker load -i "$img"
+              rm "$img"
             done
             fi
 
