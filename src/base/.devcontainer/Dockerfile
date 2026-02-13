@@ -2,13 +2,17 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
 ARG TARGETARCH
 ENV TARGETARCH=${TARGETARCH}
-ARG SCRIPTS_DIR=/usr/local/share/eps/
+ARG SCRIPTS_DIR=/usr/local/share/eps
 ARG CONTAINER_NAME
 ENV CONTAINER_NAME=${CONTAINER_NAME}
 ENV SCRIPTS_DIR=${SCRIPTS_DIR}
 
+LABEL org.opencontainers.image.source=https://github.com/NHSDigital/eps-devcontainers
+LABEL org.opencontainers.image.description="EPS base devcontainer"
+LABEL org.opencontainers.image.licenses=MIT
+
 ARG ASDF_VERSION
-COPY .tool-versions.asdf /tmp/.tool-versions.asdf
+COPY .tool-versions.asdf ${SCRIPTS_DIR}/${CONTAINER_NAME}/.tool-versions.asdf
 
 COPY --chmod=755 scripts ${SCRIPTS_DIR}/${CONTAINER_NAME}
 WORKDIR ${SCRIPTS_DIR}/${CONTAINER_NAME}
@@ -18,12 +22,8 @@ USER vscode
 
 ENV PATH="/home/vscode/.asdf/shims/:$PATH"
 WORKDIR ${SCRIPTS_DIR}/${CONTAINER_NAME}
-COPY .tool-versions.asdf /home/vscode/.tool-versions.asdf
-COPY .tool-versions /home/vscode/.tool-versions
-COPY language_versions/nodejs-versions.txt /tmp/nodejs-versions.txt
-COPY language_versions/python-versions.txt /tmp/python-versions.txt
-COPY language_versions/java-versions.txt /tmp/java-versions.txt
-COPY language_versions/terraform-versions.txt /tmp/terraform-versions.txt
-COPY language_versions/golang-versions.txt /tmp/golang-versions.txt
+COPY --chown=vscode:vscode .tool-versions.asdf /home/vscode/.tool-versions.asdf
+COPY --chown=vscode:vscode .tool-versions /home/vscode/.tool-versions
 
 RUN ./vscode_install.sh
+WORKDIR /home/vscode

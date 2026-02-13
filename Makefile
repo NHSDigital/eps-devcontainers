@@ -1,7 +1,14 @@
-CONTAINER_PREFIX=ghcr.io/nhsdigital/eps-devcontainer-
-CONTAINER_NAME=base
-IMAGE_NAME=${CONTAINER_PREFIX}$(CONTAINER_NAME)
-WORKSPACE_FOLDER=.
+CONTAINER_PREFIX=ghcr.io/nhsdigital/eps-devcontainers/
+
+ifneq ($(strip $(PLATFORM)),)
+PLATFORM_FLAG=--platform $(PLATFORM)
+endif
+
+guard-%:
+	@ if [ "${${*}}" = "" ]; then \
+		echo "Environment variable $* not set"; \
+		exit 1; \
+	fi
 
 install: install-python install-node install-hooks
 
@@ -14,20 +21,52 @@ install-node:
 install-hooks: install-python
 	poetry run pre-commit install --install-hooks --overwrite
 
-install-hooks:
-build-base-image: generate-language-version-files
-	CONTAINER_NAME=$(CONTAINER_NAME) \
-	devcontainer build \
-		--workspace-folder ./src/base/ \
+build-image: guard-CONTAINER_NAME guard-BASE_VERSION guard-BASE_FOLDER
+	npx devcontainer build \
+		--workspace-folder ./src/$${BASE_FOLDER}/$${CONTAINER_NAME} \
 		--push false \
-		--image-name "${IMAGE_NAME}"
+		--label "org.opencontainers.image.revision=$$DOCKER_TAG" \
+		--image-name "${CONTAINER_PREFIX}$${CONTAINER_NAME}${IMAGE_TAG}"
 
-generate-language-version-files:
-	./scripts/generate_language_version_files.sh
-
-scan-base-image:
+scan-image: guard-CONTAINER_NAME guard-BASE_FOLDER
+	@combined="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore_combined.yaml"; \
+	common="src/common/.trivyignore.yaml"; \
+	specific="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore.yaml"; \
+	echo "vulnerabilities:" > "$$combined"; \
+	if [ -f "$$common" ]; then sed -n '2,$$p' "$$common" >> "$$combined"; fi; \
+	if [ -f "$$specific" ]; then sed -n '2,$$p' "$$specific" >> "$$combined"; fi
 	trivy image \
 		--severity HIGH,CRITICAL \
-		--ignorefile .trivyignore.yaml \
+		--config src/${BASE_FOLDER}/${CONTAINER_NAME}/trivy.yaml \
+		--scanners vuln \
 		--exit-code 1 \
-		--format table ${IMAGE_NAME} 
+		--format table "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 
+
+scan-image-json: guard-CONTAINER_NAME guard-BASE_FOLDER
+	@combined="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore_combined.yaml"; \
+	common="src/common/.trivyignore.yaml"; \
+	specific="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore.yaml"; \
+	echo "vulnerabilities:" > "$$combined"; \
+	if [ -f "$$common" ]; then sed -n '2,$$p' "$$common" >> "$$combined"; fi; \
+	if [ -f "$$specific" ]; then sed -n '2,$$p' "$$specific" >> "$$combined"; fi
+	mkdir -p .out
+	trivy image \
+		--severity HIGH,CRITICAL \
+		--config src/${BASE_FOLDER}/${CONTAINER_NAME}/trivy.yaml \
+		--scanners vuln \
+		--exit-code 1 \
+		--format json \
+		--output .out/scan.out.json "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 
+
+shell-image: guard-CONTAINER_NAME
+	docker run -it \
+	"${CONTAINER_PREFIX}$${CONTAINER_NAME}${IMAGE_TAG}"  \
+	bash
+
+lint: lint-githubactions
+
+test:
+	echo "Not implemented"
+
+lint-githubactions:
+	actionlint

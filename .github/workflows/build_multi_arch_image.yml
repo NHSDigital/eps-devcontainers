@@ -1,0 +1,184 @@
+name: Build and push docker image
+'on':
+  workflow_call:
+    inputs:
+      tag_latest:
+        required: true
+        type: boolean
+      docker_tag:
+        required: true
+        type: string
+      container_name:
+        required: true
+        type: string
+      base_folder:
+        required: true
+        type: string
+
+jobs:
+  build_and_push_image:
+    name: Build image for ${{ inputs.container_name }} on ${{ matrix.arch }}
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    runs-on: '${{ matrix.runner }}'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-22.04
+          - arch: arm64
+            runner: ubuntu-22.04-arm
+    steps:
+      - name: Free Disk Space for Docker
+        uses: endersonmenezes/free-disk-space@e6ed9b02e683a3b55ed0252f1ee469ce3b39a885
+        with:
+          remove_android: true
+          remove_dotnet: true
+          remove_haskell: true
+          remove_tool_cache: true
+          rm_cmd: rm
+          remove_packages: >-
+            azure-cli google-cloud-cli microsoft-edge-stable
+            google-chrome-stable firefox postgresql* temurin-* *llvm* mysql*
+            dotnet-sdk-*
+          remove_packages_one_command: true
+      - name: Login to github container registry
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        with:
+              registry: ghcr.io
+              username: ${{github.actor}}
+              password: ${{secrets.GITHUB_TOKEN}}
+      - name: Checkout code
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        with:
+          fetch-depth: 0
+      - name: setup node
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
+        with:
+          node-version-file: .tool-versions
+  
+      - name: make install
+        run: |
+          make install-node
+
+      - name: Build container
+        run: |
+          echo "Building image..."
+          make build-image
+
+          echo "Creating combined trivy ignore file"
+          # create combined trivy ignore file for use in trivy scan, combining common and specific ignore files if they exist
+          combined="src/${BASE_FOLDER}/${CONTAINER_NAME}/.trivyignore_combined.yaml"
+          common="src/common/.trivyignore.yaml"
+          specific="src/${BASE_FOLDER}/${CONTAINER_NAME}/.trivyignore.yaml"
+          echo "vulnerabilities:" > "$combined"
+          if [ -f "$common" ]; then sed -n '2,$p' "$common" >> "$combined"; fi
+          if [ -f "$specific" ]; then sed -n '2,$p' "$specific" >> "$combined"; fi
+          echo "Combined trivy ignore file created at $combined"
+
+        env:
+          ARCHITECTURE: '${{ matrix.arch }}'
+          DOCKER_TAG: '${{ inputs.docker_tag }}'
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          BASE_VERSION: ${{ inputs.docker_tag}}
+          IMAGE_TAG: ":${{ inputs.docker_tag }}-${{ matrix.arch }}"
+          BASE_FOLDER: "${{ inputs.base_folder }}"
+      - name: Check docker vulnerabilities - json output
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
+        with:
+          scan-type: "image"
+          image-ref:  "ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}:${{ inputs.docker_tag }}-${{ matrix.arch }}"
+          severity: "CRITICAL,HIGH"
+          scanners: "vuln"
+          vuln-type: "os,library"
+          format: "json"
+          output: "scan_results_docker.json"
+          exit-code: "0"
+          trivy-config: src/${{ inputs.base_folder }}/${{ inputs.container_name }}/trivy.yaml
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        name: Upload scan results
+        with:
+          name: "scan_results_docker_${{ inputs.container_name }}_${{ matrix.arch }}.json"
+          path: scan_results_docker.json
+      - name: Check docker vulnerabilities - table output
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
+        with:
+          scan-type: "image"
+          image-ref:  "ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}:${{ inputs.docker_tag }}-${{ matrix.arch }}"
+          severity: "CRITICAL,HIGH"
+          scanners: "vuln"
+          vuln-type: "os,library"
+          format: "table"
+          output: "scan_results_docker.txt"
+          exit-code: "1"
+          trivy-config: src/${{ inputs.base_folder }}/${{ inputs.container_name }}/trivy.yaml
+
+      - name: Show docker vulnerability output
+        if: always()
+        run: |
+          echo "Scan output for ghcr.io/nhsdigital/eps-devcontainers/base:${DOCKER_TAG}-${ARCHITECTURE}"
+          if [ -f scan_results_docker.txt ]; then
+            cat scan_results_docker.txt
+          fi
+        env:
+          ARCHITECTURE: '${{ matrix.arch }}'
+          DOCKER_TAG: '${{ inputs.docker_tag }}'
+      - name: Push tagged image
+        run: |
+          echo "Pushing image..."
+          docker push "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}"
+        env:
+          DOCKER_TAG: ${{ inputs.docker_tag }}
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          ARCHITECTURE: '${{ matrix.arch }}'
+      - name: Push latest image
+        if: ${{ inputs.tag_latest }}
+        run: |
+          docker tag "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}" "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-${ARCHITECTURE}"
+          echo "Pushing image..."
+          docker push "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-${ARCHITECTURE}"
+        env:
+          DOCKER_TAG: ${{ inputs.docker_tag }}
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          ARCHITECTURE: '${{ matrix.arch }}'
+  publish_combined_image:
+    name: Publish combined image for ${{ inputs.container_name }}
+    runs-on: ubuntu-22.04
+    needs: build_and_push_image
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - name: Login to github container registry
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        with:
+              registry: ghcr.io
+              username: ${{github.actor}}
+              password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Push multi-arch tagged image
+        run: |
+          docker buildx imagetools create -t "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}" \
+            "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-amd64" \
+            "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-arm64"
+            echo "## PUSHED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          DOCKER_TAG: ${{ inputs.docker_tag }}
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+
+      - name: Push multi-arch latest image
+        if: ${{ inputs.tag_latest }}
+        run: |
+          docker buildx imagetools create -t "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest" \
+            "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-amd64" \
+            "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-arm64"
+          echo "## PUSHED COMBINED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          DOCKER_TAG: ${{ inputs.docker_tag }}
+          CONTAINER_NAME: '${{ inputs.container_name }}'

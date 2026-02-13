@@ -1,0 +1,3 @@
+id-token: write
+password: \${{secrets\.GITHUB_TOKEN}}
+\.gitallowed

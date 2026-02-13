@@ -1,0 +1,63 @@
+name: build_all_images
+'on':
+  workflow_call:
+    inputs:
+      docker_tag:
+        required: true
+        type: string
+      tag_latest:
+        required: true
+        type: boolean
+env:
+  BRANCH_NAME: '${{ github.event.pull_request.head.ref }}'
+jobs:
+  discover_folders:
+    runs-on: ubuntu-latest
+    outputs:
+      language_folders: ${{ steps.find-folders.outputs.languages }}
+      project_folders: ${{ steps.find-folders.outputs.projects }}
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - id: find-folders
+        run: |
+          language_folders=$(find src/languages -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | jq -R -s -c 'split("\n")[:-1]')
+          project_folders=$(find src/projects -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | jq -R -s -c 'split("\n")[:-1]')
+          echo "languages=$language_folders" >> "$GITHUB_OUTPUT"
+          echo "projects=$project_folders" >> "$GITHUB_OUTPUT"
+  package_base_docker_image:
+    uses: ./.github/workflows/build_multi_arch_image.yml
+    with:
+      tag_latest: ${{ inputs.tag_latest }}
+      docker_tag: ${{ inputs.docker_tag }}
+      container_name: base
+      base_folder: "."
+  package_language_docker_images:
+    needs:
+      - package_base_docker_image
+      - discover_folders
+    strategy:
+      fail-fast: false
+      matrix:
+            container_name: ${{ fromJson(needs.discover_folders.outputs.language_folders) }}
+    uses: ./.github/workflows/build_multi_arch_image.yml
+    with:
+      tag_latest: ${{ inputs.tag_latest }}
+      docker_tag: ${{ inputs.docker_tag }}
+      container_name: ${{ matrix.container_name }}
+      base_folder: "languages"
+  package_project_docker_images:
+    needs:
+      - package_language_docker_images
+
+      - discover_folders
+    strategy:
+      fail-fast: false
+      matrix:
+        container_name: ${{ fromJson(needs.discover_folders.outputs.project_folders) }}
+    uses: ./.github/workflows/build_multi_arch_image.yml
+    with:
+      tag_latest: ${{ inputs.tag_latest }}
+      docker_tag: ${{ inputs.docker_tag }}
+      container_name: ${{ matrix.container_name }}
+      base_folder: "projects"
