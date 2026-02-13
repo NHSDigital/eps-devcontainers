@@ -45,3 +45,4 @@ jobs:
     with: 
       docker_tag: '${{ needs.tag_release.outputs.version_tag }}'
       tag_latest: true
+      push_image: true

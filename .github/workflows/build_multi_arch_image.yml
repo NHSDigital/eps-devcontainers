@@ -14,6 +14,9 @@ name: Build and push docker image
       base_folder:
         required: true
         type: string
+      push_image:
+        required: true
+        type: boolean
 
 jobs:
   build_and_push_image:
@@ -127,6 +130,7 @@ jobs:
           ARCHITECTURE: '${{ matrix.arch }}'
           DOCKER_TAG: '${{ inputs.docker_tag }}'
       - name: Push tagged image
+        if: ${{ inputs.push_image }}
         run: |
           echo "Pushing image..."
           docker push "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}"
@@ -135,7 +139,7 @@ jobs:
           CONTAINER_NAME: '${{ inputs.container_name }}'
           ARCHITECTURE: '${{ matrix.arch }}'
       - name: Push latest image
-        if: ${{ inputs.tag_latest }}
+        if: ${{ inputs.tag_latest && inputs.push_image }}
         run: |
           docker tag "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}" "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-${ARCHITECTURE}"
           echo "Pushing image..."
@@ -146,6 +150,7 @@ jobs:
           ARCHITECTURE: '${{ matrix.arch }}'
 
   publish_combined_image:
+    if: ${{ inputs.push_image }}
     name: Publish image for ${{ inputs.container_name }}
     runs-on: ubuntu-22.04
     needs: build_and_push_image
