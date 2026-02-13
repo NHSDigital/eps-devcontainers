@@ -16,6 +16,7 @@ if [ "$TARGETARCH" == "arm64" ] || [ "$TARGETARCH" == "aarch64" ]; then
     echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu jammy-security main universe" >> /etc/apt/sources.list
 fi
 
+# update and upgrade packages
 echo "Running apt-get update"
 apt-get update
 apt-get upgrade -y
@@ -65,3 +66,15 @@ rm -rf /tmp/git-secrets
 mkdir -p /usr/share/secrets-scanner
 chmod 755 /usr/share/secrets-scanner
 curl -L https://raw.githubusercontent.com/NHSDigital/software-engineering-quality-framework/main/tools/nhsd-git-secrets/nhsd-rules-deny.txt -o /usr/share/secrets-scanner/nhsd-rules-deny.txt
+
+# fix user and group ids for vscode user to match host, and ensure vscode owns their home directory
+requested_uid="${VSCODE_UID:-1000}"
+requested_gid="${VSCODE_GID:-1000}"
+current_uid="$(id -u vscode)"
+current_gid="$(id -g vscode)"
+if [ "${current_gid}" != "${requested_gid}" ]; then groupmod -g "${requested_gid}" vscode; fi
+if [ "${current_uid}" != "${requested_uid}" ]; then usermod -u "${requested_uid}" -g "${requested_gid}" vscode; fi
+chown -R vscode:vscode /home/vscode
+
+# store base version in VERSION.txt for reference
+echo "VERSION=${BASE_VERSION}" > "${SCRIPTS_DIR}/VERSION.txt"
