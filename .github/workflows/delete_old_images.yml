@@ -24,7 +24,6 @@ jobs:
 
       - name: delete unused images
         shell: bash
-        working-directory: .github/scripts
-        run: ./delete_unused_images.sh
+        run: .github/scripts/delete_unused_images.sh
         env:
-          GGH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
