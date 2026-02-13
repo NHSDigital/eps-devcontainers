@@ -57,10 +57,28 @@ For pull requests, an image is pushed with tag `pr-<pull-request-id>-<short comm
 On merges to main, a new release is created, and images are tagged with `latest` and the version of the release.
 
 # Local testing
-For local testing, you can run
+For local testing, you can run this to build the base image
 ```
-CONTAINER_NAME=base BASE_VERSION=latest make build-image
+CONTAINER_NAME=base \
+  BASE_VERSION=latest \
+  BASE_FOLDER=. \
+  make build-image
 ``` 
+or this to build a language image
+```
+CONTAINER_NAME=node_24_python_3_12 \
+  BASE_VERSION=latest \
+  BASE_FOLDER=languages \
+  make build-image
+``` 
+or this to build a project image
+```
+CONTAINER_NAME=fhir_facade_api \
+  BASE_VERSION=latest \
+  BASE_FOLDER=projects \
+  make build-image
+``` 
+
 to build a local image, and then
 ```
 CONTAINER_NAME=base BASE_VERSION=latest make scan-image

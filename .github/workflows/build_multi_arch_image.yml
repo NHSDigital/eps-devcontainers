@@ -11,6 +11,9 @@ name: Build and push docker image
       container_name:
         required: true
         type: string
+      base_folder:
+        required: true
+        type: string
 
 jobs:
   build_and_push_image:
@@ -81,8 +84,8 @@ jobs:
           DOCKER_TAG: '${{ inputs.docker_tag }}'
           CONTAINER_NAME: '${{ inputs.container_name }}'
           BASE_VERSION: ${{ inputs.docker_tag}}
-          PLATFORM: linux/${{ matrix.arch }}
           IMAGE_TAG: ":${{ inputs.docker_tag }}-${{ matrix.arch }}"
+          BASE_FOLDER: "${{ inputs.base_folder }}"
       - name: Check docker vulnerabilities - json output
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
         with:

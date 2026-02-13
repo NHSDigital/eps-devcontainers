@@ -17,7 +17,8 @@ jobs:
       tag_latest: ${{ inputs.tag_latest }}
       docker_tag: ${{ inputs.docker_tag }}
       container_name: base
-  package_non_base_docker_image:
+      base_folder: "."
+  package_language_docker_image:
     needs:
       - package_base_docker_image
     strategy:
@@ -33,9 +34,10 @@ jobs:
       tag_latest: ${{ inputs.tag_latest }}
       docker_tag: ${{ inputs.docker_tag }}
       container_name: ${{ matrix.container_name }}
-  package_product_docker_image:
+      base_folder: "languages"
+  package_project_docker_image:
     needs:
-      - package_non_base_docker_image
+      - package_language_docker_image
     strategy:
       fail-fast: false
       matrix:
@@ -46,3 +48,4 @@ jobs:
       tag_latest: ${{ inputs.tag_latest }}
       docker_tag: ${{ inputs.docker_tag }}
       container_name: ${{ matrix.container_name }}
+      base_folder: "projects"

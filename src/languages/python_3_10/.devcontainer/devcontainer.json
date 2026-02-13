@@ -1,13 +1,13 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
 {
-    "name": "EPS Devcontainer node_24 python_3.14",
+    "name": "EPS Devcontainer node_24 python_3.13",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
     "build": {
-      "dockerfile": "../../common/Dockerfile",
+      "dockerfile": "../../../common/Dockerfile",
       "args": {
         "BASE_VERSION": "${localEnv:BASE_VERSION}",
-        "CONTAINER_NAME": "eps_devcontainer_node_24_python_3_14"
+        "CONTAINER_NAME": "eps_devcontainer_node_24_python_3_13"
       },
       "context": "."
     },
