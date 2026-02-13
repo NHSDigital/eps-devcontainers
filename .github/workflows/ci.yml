@@ -1,8 +1,7 @@
-name: release workflow
+name: merge to main workflow
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 18 * * 4"
+  push:
+    branches: [main]
 
 jobs:
   get_asdf_version:
@@ -45,5 +44,5 @@ jobs:
     uses: ./.github/workflows/build_all_images.yml 
     with: 
       docker_tag: '${{ needs.tag_release.outputs.version_tag }}'
-      tag_latest: true
-      push_image: true
+      tag_latest: false
+      push_image: false
