@@ -70,7 +70,8 @@ The base image is built first, and then language images, and finally project ima
 
 Docker images are scanned for vulnerabilities using trivy as part of a build step, and the build fails if vulnerabilities are found not in .trivyignore file.
 
-Docker images are also uploaded as artifacts of build.
+For pull requests, images are tagged with the pr-<pull request id>-<short commit sha>.   
+For merges to main, images are tagged with the <short commit sha>
 
 # Release workflow
 There is a release workflow that runs weekly at 18:00 on Thursday and on demand.   

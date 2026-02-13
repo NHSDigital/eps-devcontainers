@@ -7,6 +7,10 @@ ARG CONTAINER_NAME
 ENV CONTAINER_NAME=${CONTAINER_NAME}
 ENV SCRIPTS_DIR=${SCRIPTS_DIR}
 
+LABEL org.opencontainers.image.source=https://github.com/NHSDigital/eps-devcontainers
+LABEL org.opencontainers.image.description="EPS base devcontainer"
+LABEL org.opencontainers.image.licenses=MIT
+
 ARG ASDF_VERSION
 COPY .tool-versions.asdf ${SCRIPTS_DIR}/${CONTAINER_NAME}/.tool-versions.asdf
 
