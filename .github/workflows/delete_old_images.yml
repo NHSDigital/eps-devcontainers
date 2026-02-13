@@ -12,8 +12,10 @@ jobs:
   delete-old-pushed-images:
     runs-on: ubuntu-22.04
     permissions:
-      id-token: write
       contents: read
+      packages: write
+      attestations: write
+      id-token: write
 
     steps:
       - name: Checkout local code
