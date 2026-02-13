@@ -3,3 +3,4 @@ direnv 2.37.1
 actionlint 1.7.10
 ruby 3.3.0
 trivy 0.69.1
+yq 4.52.2
