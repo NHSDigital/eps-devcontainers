@@ -74,9 +74,9 @@ jobs:
 
           echo "Creating combined trivy ignore file"
           # create combined trivy ignore file for use in trivy scan, combining common and specific ignore files if they exist
-          combined="src/${CONTAINER_NAME}/.trivyignore_combined.yaml"
+          combined="src/${BASE_FOLDER}/${CONTAINER_NAME}/.trivyignore_combined.yaml"
           common="src/common/.trivyignore.yaml"
-          specific="src/${CONTAINER_NAME}/.trivyignore.yaml"
+          specific="src/${BASE_FOLDER}/${CONTAINER_NAME}/.trivyignore.yaml"
           echo "vulnerabilities:" > "$combined"
           if [ -f "$common" ]; then sed -n '2,$p' "$common" >> "$combined"; fi
           if [ -f "$specific" ]; then sed -n '2,$p' "$specific" >> "$combined"; fi
@@ -100,7 +100,7 @@ jobs:
           format: "json"
           output: "scan_results_docker.json"
           exit-code: "0"
-          trivy-config: src/${{ inputs.container_name }}/trivy.yaml
+          trivy-config: src/${{ inputs.base_folder }}/${{ inputs.container_name }}/trivy.yaml
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         name: Upload scan results
         with:
@@ -117,7 +117,7 @@ jobs:
           format: "table"
           output: "scan_results_docker.txt"
           exit-code: "1"
-          trivy-config: src/${{ inputs.container_name }}/trivy.yaml
+          trivy-config: src/${{ inputs.base_folder }}/${{ inputs.container_name }}/trivy.yaml
 
       - name: Show docker vulnerability output
         if: always()
