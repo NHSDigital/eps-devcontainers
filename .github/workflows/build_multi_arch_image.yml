@@ -65,7 +65,6 @@ jobs:
         run: |
           echo "Building image..."
           make build-image
-          docker tag "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest" "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}"
 
           echo "Creating combined trivy ignore file"
           # create combined trivy ignore file for use in trivy scan, combining common and specific ignore files if they exist
@@ -83,6 +82,7 @@ jobs:
           CONTAINER_NAME: '${{ inputs.container_name }}'
           BASE_VERSION: ${{ inputs.docker_tag}}
           PLATFORM: linux/${{ matrix.arch }}
+          IMAGE_TAG: ":${{ inputs.docker_tag }}-${{ matrix.arch }}"
       - name: Check docker vulnerabilities - json output
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
         with:

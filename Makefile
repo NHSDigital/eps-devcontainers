@@ -26,7 +26,7 @@ build-image: guard-CONTAINER_NAME guard-BASE_VERSION guard-PLATFORM
 		--workspace-folder ./src/$${CONTAINER_NAME}/ \
 		--push false \
 		--platform $${PLATFORM} \
-		--image-name "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 
+		--image-name "${CONTAINER_PREFIX}$${CONTAINER_NAME}${IMAGE_TAG}" 
 
 scan-image: guard-CONTAINER_NAME
 	@combined="src/$${CONTAINER_NAME}/.trivyignore_combined.yaml"; \
