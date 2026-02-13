@@ -302,3 +302,8 @@ vulnerabilities:
     purls:
       - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-170.180?arch=arm64&distro=ubuntu-22.04"
     expired_at: 2026-08-12
+  - id: CVE-2025-68121
+    statement: "crypto/tls: Unexpected session resumption in crypto/tls"
+    purls:
+      - "pkg:golang/stdlib@v1.25.6"
+    expired_at: 2026-08-13
