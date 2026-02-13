@@ -75,10 +75,16 @@ jobs:
       - name: Extract images
         if: ${{ !inputs.push_image }}
         run: |
-          for img in eps-devcontainer-*.img; do
-            echo "Loading image from $img..."
-            docker load -i "$img"
-          done
+            shopt -s nullglob
+            imgs=(eps-devcontainer-*.img)
+            if [ ${#imgs[@]} -eq 0 ]; then
+            echo "No images found to load."
+            else
+            for img in "${imgs[@]}"; do
+              echo "Loading image from $img..."
+              docker load -i "$img"
+            done
+            fi
 
       - name: Build container
         run: |
