@@ -71,3 +71,9 @@ test:
 
 lint-githubactions:
 	actionlint
+
+github-login:
+	gh auth login --scopes read:packages
+
+lint-githubaction-scripts:
+	shellcheck .github/scripts/*.sh
