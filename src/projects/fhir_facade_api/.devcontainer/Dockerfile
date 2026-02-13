@@ -18,6 +18,3 @@ COPY .tool-versions /tmp/.tool-versions
 RUN cat /tmp/.tool-versions >> /home/vscode/.tool-versions
 
 RUN ./vscode_install.sh
-
-# need to finish as root
-USER root

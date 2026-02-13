@@ -26,6 +26,3 @@ COPY --chown=vscode:vscode .tool-versions.asdf /home/vscode/.tool-versions.asdf
 COPY --chown=vscode:vscode .tool-versions /home/vscode/.tool-versions
 
 RUN ./vscode_install.sh
-
-# need to finish as root
-USER root
