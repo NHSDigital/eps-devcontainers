@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 get_container_package_name() {
 	local container_name=$1
