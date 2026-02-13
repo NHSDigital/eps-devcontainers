@@ -13,9 +13,12 @@ name: Build and push docker image
         type: string
 
 jobs:
-  build_image:
+  build_and_push_image:
     name: Build image for ${{ inputs.container_name }} on ${{ matrix.arch }}
     permissions:
+      contents: read
+      packages: write
+      attestations: write
       id-token: write
     runs-on: '${{ matrix.runner }}'
     strategy:
@@ -139,10 +142,10 @@ jobs:
           CONTAINER_NAME: '${{ inputs.container_name }}'
           ARCHITECTURE: '${{ matrix.arch }}'
 
-  publish_image:
+  publish_combined_image:
     name: Publish image for ${{ inputs.container_name }}
     runs-on: ubuntu-22.04
-    needs: build_image
+    needs: build_and_push_image
     permissions:
       contents: read
       packages: write
