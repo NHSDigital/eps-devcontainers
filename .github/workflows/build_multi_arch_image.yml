@@ -87,6 +87,8 @@ jobs:
           BASE_VERSION: ${{ inputs.docker_tag}}
           IMAGE_TAG: ":${{ inputs.docker_tag }}-${{ matrix.arch }}"
           BASE_FOLDER: "${{ inputs.base_folder }}"
+          VSCODE_UID: "1001"
+          VSCODE_GID: "1001"
       - name: Check docker vulnerabilities - json output
         uses: aquasecurity/trivy-action@c1824fd6edce30d7ab345a9989de00bbd46ef284
         with:

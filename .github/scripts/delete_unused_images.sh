@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 get_container_package_name() {
 	local container_name=$1
@@ -71,9 +70,9 @@ delete_pr_images() {
 					if [[ -n "${version_id}" ]]; then
                         echo "Deleting image with tag ${tag} (version ID: ${version_id}) from container ${container_name}..."
 						gh api \
-							-H "Accept: application/vnd.github+json" \
-							-X DELETE \
-							"/orgs/nhsdigital/packages/container/${package_name}/versions/${version_id}"
+						 	-H "Accept: application/vnd.github+json" \
+						 	-X DELETE \
+						 	"/orgs/nhsdigital/packages/container/${package_name}/versions/${version_id}"
 					fi
 				done
 		fi

@@ -57,7 +57,7 @@ scan-image-json: guard-CONTAINER_NAME guard-BASE_FOLDER
 		--scanners vuln \
 		--exit-code 1 \
 		--format json \
-		--output .out/scan.out.json "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 
+		--output .out/scan_results_docker.json "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 
 
 shell-image: guard-CONTAINER_NAME
 	docker run -it \
