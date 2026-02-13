@@ -26,6 +26,7 @@ asdf install and setup for these so they are available globally as vscode user
  - actionlint
  - ruby (for github pages)
  - trivy
+ - yq
 
 Install and setup git-secrets
 
