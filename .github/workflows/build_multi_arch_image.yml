@@ -172,6 +172,7 @@ jobs:
           docker buildx imagetools create -t "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}" \
             "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-amd64" \
             "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-arm64"
+            echo "## PUSHED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}" >> "$GITHUB_STEP_SUMMARY"
         env:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'
@@ -182,6 +183,7 @@ jobs:
           docker buildx imagetools create -t "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest" \
             "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-amd64" \
             "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-arm64"
+          echo "## PUSHED COMBINED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest" >> "$GITHUB_STEP_SUMMARY"
         env:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'
