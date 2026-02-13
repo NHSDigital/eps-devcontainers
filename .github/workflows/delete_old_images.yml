@@ -1,4 +1,4 @@
-name: "Delete old cloudformation stacks"
+name: "Delete old images"
 
 # Controls when the action will run - in this case triggered manually and on schedule
 on:
@@ -9,34 +9,7 @@ on:
     branches: [main]
 
 jobs:
-  delete-old-cloudformation-stacks:
-    runs-on: ubuntu-22.04
-    permissions:
-      id-token: write
-      contents: read
-
-    steps:
-      - name: Checkout local code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-        with:
-          ref: ${{ env.BRANCH_NAME }}
-          fetch-depth: 0
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7
-        with:
-          aws-region: eu-west-2
-          role-to-assume: ${{ secrets.DEV_CLOUD_FORMATION_DEPLOY_ROLE }}
-          role-session-name: psu-delete-old-stacks
-
-      - name: delete stacks
-        shell: bash
-        working-directory: .github/scripts
-        run: ./delete_stacks.sh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  delete-old-proxygen-deployments:
+  delete-old-pushed-images:
     runs-on: ubuntu-22.04
     permissions:
       id-token: write
@@ -53,3 +26,5 @@ jobs:
         shell: bash
         working-directory: .github/scripts
         run: ./delete_unused_images.sh
+        env:
+          GGH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
