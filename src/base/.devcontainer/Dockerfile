@@ -17,6 +17,13 @@ COPY .tool-versions.asdf ${SCRIPTS_DIR}/${CONTAINER_NAME}/.tool-versions.asdf
 COPY --chmod=755 scripts ${SCRIPTS_DIR}/${CONTAINER_NAME}
 WORKDIR ${SCRIPTS_DIR}/${CONTAINER_NAME}
 RUN ./root_install.sh
+RUN requested_uid="${VSCODE_UID:-1000}" \
+    && requested_gid="${VSCODE_GID:-1000}" \
+    && current_uid="$(id -u vscode)" \
+    && current_gid="$(id -g vscode)" \
+    && if [ "${current_gid}" != "${requested_gid}" ]; then groupmod -g "${requested_gid}" vscode; fi \
+    && if [ "${current_uid}" != "${requested_uid}" ]; then usermod -u "${requested_uid}" -g "${requested_gid}" vscode; fi \
+    && chown -R vscode:vscode /home/vscode
 
 USER vscode
 

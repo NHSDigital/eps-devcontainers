@@ -6,7 +6,9 @@
     "build": {
       "dockerfile": "Dockerfile",
       "args": {
-        "CONTAINER_NAME": "eps_devcontainer_base"
+        "CONTAINER_NAME": "eps_devcontainer_base",
+        "VSCODE_UID": "${localEnv:VSCODE_UID}",
+        "VSCODE_GID": "${localEnv:VSCODE_GID}"
       }
     },
     "runArgs": [
