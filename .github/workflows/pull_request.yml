@@ -92,4 +92,3 @@ jobs:
     with: 
       docker_tag: 'pr-${{ needs.get_issue_number.outputs.issue_number }}-${{ needs.get_commit_id.outputs.sha_short }}'
       tag_latest: false
-      push_image: false
