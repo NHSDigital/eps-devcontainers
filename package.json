@@ -9,6 +9,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@devcontainers/cli": "^0.80.3"
+    "@devcontainers/cli": "^0.83.0"
   }
 }
