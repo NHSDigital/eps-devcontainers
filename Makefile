@@ -25,6 +25,7 @@ build-image: guard-CONTAINER_NAME guard-BASE_VERSION guard-BASE_FOLDER
 	npx devcontainer build \
 		--workspace-folder ./src/$${BASE_FOLDER}/$${CONTAINER_NAME} \
 		--push false \
+		--cache-from "${CONTAINER_PREFIX}$${CONTAINER_NAME}:latest" \
 		--label "org.opencontainers.image.revision=$$DOCKER_TAG" \
 		--image-name "${CONTAINER_PREFIX}$${CONTAINER_NAME}${IMAGE_TAG}"
 
