@@ -67,6 +67,19 @@ jobs:
       - name: make install
         run: |
           make install-node
+      - name: Download images
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        if: ${{ !inputs.push_image }}
+        with:
+          pattern: eps-devcontainer-*.img
+      - name: Extract images
+        if: ${{ !inputs.push_image }}
+        run: |
+          for img in eps-devcontainer-*.img; do
+            echo "Loading image from $img..."
+            docker load -i "$img"
+          done
+
       - name: Build container
         run: |
           echo "Building image..."
@@ -148,7 +161,22 @@ jobs:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'
           ARCHITECTURE: '${{ matrix.arch }}'
-
+      - name: Save image for upload
+        if: ${{ !inputs.push_image }}
+        run: |
+          docker save "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}" -o "eps-devcontainer-${CONTAINER_NAME}-${DOCKER_TAG}-${ARCHITECTURE}.img"
+        env:
+          ARCHITECTURE: '${{ matrix.arch }}'
+          DOCKER_TAG: '${{ inputs.docker_tag }}'
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          BASE_VERSION: ${{ inputs.docker_tag}}
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        name: Upload docker images
+        if: ${{ !inputs.push_image }}
+        with:
+          name: "eps-devcontainer-${{ inputs.container_name }}-${{ inputs.docker_tag }}-${{ matrix.arch }}.img"
+          path: |
+            eps-devcontainer-${{ inputs.container_name }}-${{ inputs.docker_tag }}-${{ matrix.arch }}.img
   publish_combined_image:
     if: ${{ inputs.push_image }}
     name: Publish image for ${{ inputs.container_name }}
