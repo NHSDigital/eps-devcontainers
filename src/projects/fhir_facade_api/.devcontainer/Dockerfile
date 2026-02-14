@@ -1,21 +1,19 @@
-ARG BASE_VERSION=latest
+ARG BASE_VERSION_TAG=latest
 
-FROM ghcr.io/nhsdigital/eps-devcontainers/node_24_python_3_13:${BASE_VERSION}
+FROM ghcr.io/nhsdigital/eps-devcontainers/node_24_python_3_13:${BASE_VERSION_TAG}
 
-ARG BASE_VERSION=latest
+ARG BASE_VERSION_TAG=latest
 ARG TARGETARCH
 ARG SCRIPTS_DIR=/usr/local/share/eps
 ARG CONTAINER_NAME
-ARG DOCKER_TAG
-ARG BASE_VERSION
+ARG MULTI_ARCH_TAG
 ARG IMAGE_TAG
 
-ENV BASE_VERSION=${BASE_VERSION}
+ENV BASE_VERSION_TAG=${BASE_VERSION_TAG}
 ENV TARGETARCH=${TARGETARCH}
 ENV SCRIPTS_DIR=${SCRIPTS_DIR}
 ENV CONTAINER_NAME=${CONTAINER_NAME}
-ENV DOCKER_TAG=${DOCKER_TAG}
-ENV BASE_VERSION=${BASE_VERSION}
+ENV MULTI_ARCH_TAG=${MULTI_ARCH_TAG}
 ENV IMAGE_TAG=${IMAGE_TAG}
 
 LABEL org.opencontainers.image.source=https://github.com/NHSDigital/eps-devcontainers
@@ -39,9 +37,10 @@ RUN rm -rf /home/vscode/.ssh
 USER root
 # store version info in VERSION.txt for reference
 RUN echo "[[ ${CONTAINER_NAME} ]]" >> "${SCRIPTS_DIR}/VERSION.txt" && \
-    echo "BASE_VERSION=${BASE_VERSION}" >> "${SCRIPTS_DIR}/VERSION.txt" && \
-    echo "DOCKER_TAG=${DOCKER_TAG}" >> "${SCRIPTS_DIR}/VERSION.txt" && \
+    echo "BASE_VERSION_TAG=${BASE_VERSION_TAG}" >> "${SCRIPTS_DIR}/VERSION.txt" && \
+    echo "MULTI_ARCH_TAG=${MULTI_ARCH_TAG}" >> "${SCRIPTS_DIR}/VERSION.txt" && \
     echo "IMAGE_TAG=${IMAGE_TAG}" >> "${SCRIPTS_DIR}/VERSION.txt" && \
+    echo "BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> "${SCRIPTS_DIR}/VERSION.txt" && \
     echo "" >> "${SCRIPTS_DIR}/VERSION.txt"
 
 USER vscode

@@ -83,8 +83,8 @@ jobs:
         env:
           ARCHITECTURE: '${{ matrix.arch }}'
           CONTAINER_NAME: '${{ inputs.container_name }}'
-          DOCKER_TAG: '${{ inputs.docker_tag }}'
-          BASE_VERSION: ${{ inputs.docker_tag}}
+          MULTI_ARCH_TAG: '${{ inputs.docker_tag }}'
+          BASE_VERSION_TAG: ${{ inputs.docker_tag}}
           IMAGE_TAG: ":${{ inputs.docker_tag }}-${{ matrix.arch }}"
           BASE_FOLDER: "${{ inputs.base_folder }}"
       - name: Check docker vulnerabilities - json output

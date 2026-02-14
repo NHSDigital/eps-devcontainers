@@ -8,7 +8,7 @@
       "args": {
         "CONTAINER_NAME": "eps_devcontainer_${localEnv:CONTAINER_NAME}",
         "DOCKER_TAG": "${localEnv:DOCKER_TAG}",
-        "BASE_VERSION": "${localEnv:BASE_VERSION}",
+        "BASE_VERSION_TAG": "${localEnv:BASE_VERSION_TAG}",
         "IMAGE_TAG": "${localEnv:IMAGE_TAG}"
       },
       "context": "."
