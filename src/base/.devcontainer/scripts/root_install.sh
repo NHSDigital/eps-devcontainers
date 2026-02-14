@@ -75,3 +75,8 @@ current_gid="$(id -g vscode)"
 if [ "${current_gid}" != "${requested_gid}" ]; then groupmod -g "${requested_gid}" vscode; fi
 if [ "${current_uid}" != "${requested_uid}" ]; then usermod -u "${requested_uid}" -g "${requested_gid}" vscode; fi
 chown -R vscode:vscode /home/vscode
+
+# link /home/vscode to /github/home for github actions to be able to access files in the container, and set permissions
+mkdir -p /github
+ln -s /home/vscode /github/home
+chown -R vscode:vscode /github/home
