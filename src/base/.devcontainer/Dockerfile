@@ -33,6 +33,7 @@ COPY --chown=vscode:vscode .tool-versions /home/vscode/.tool-versions
 ENV PATH="/home/vscode/.asdf/shims/:$PATH"
 WORKDIR ${SCRIPTS_DIR}/${CONTAINER_NAME}
 RUN ./vscode_install.sh
+RUN rm -rf /home/vscode/.ssh
 
 USER root
 # store version info in VERSION.txt for reference

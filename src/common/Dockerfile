@@ -35,6 +35,7 @@ RUN cat /tmp/.tool-versions >> /home/vscode/.tool-versions
 ENV PATH="/home/vscode/.asdf/shims/:$PATH"
 
 RUN ./vscode_install.sh
+RUN rm -rf /home/vscode/.ssh
 
 USER root
 # store version info in VERSION.txt for reference

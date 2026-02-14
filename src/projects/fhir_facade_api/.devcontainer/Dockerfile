@@ -34,6 +34,7 @@ COPY .tool-versions /tmp/.tool-versions
 RUN cat /tmp/.tool-versions >> /home/vscode/.tool-versions
 
 RUN ./vscode_install.sh
+RUN rm -rf /home/vscode/.ssh
 
 USER root
 # store version info in VERSION.txt for reference
