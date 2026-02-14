@@ -6,8 +6,10 @@
     "build": {
       "dockerfile": "Dockerfile",
       "args": {
+        "CONTAINER_NAME": "eps_devcontainer_${localEnv:CONTAINER_NAME}",
+        "DOCKER_TAG": "${localEnv:DOCKER_TAG}",
         "BASE_VERSION": "${localEnv:BASE_VERSION}",
-        "CONTAINER_NAME": "fhir_facade_api"
+        "IMAGE_TAG": "${localEnv:IMAGE_TAG}"
       },
       "context": "."
     },

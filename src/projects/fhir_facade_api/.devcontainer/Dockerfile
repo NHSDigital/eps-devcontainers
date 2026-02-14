@@ -2,6 +2,22 @@ ARG BASE_VERSION=latest
 
 FROM ghcr.io/nhsdigital/eps-devcontainers/node_24_python_3_13:${BASE_VERSION}
 
+ARG BASE_VERSION=latest
+ARG TARGETARCH
+ARG SCRIPTS_DIR=/usr/local/share/eps
+ARG CONTAINER_NAME
+ARG DOCKER_TAG
+ARG BASE_VERSION
+ARG IMAGE_TAG
+
+ENV BASE_VERSION=${BASE_VERSION}
+ENV TARGETARCH=${TARGETARCH}
+ENV SCRIPTS_DIR=${SCRIPTS_DIR}
+ENV CONTAINER_NAME=${CONTAINER_NAME}
+ENV DOCKER_TAG=${DOCKER_TAG}
+ENV BASE_VERSION=${BASE_VERSION}
+ENV IMAGE_TAG=${IMAGE_TAG}
+
 LABEL org.opencontainers.image.source=https://github.com/NHSDigital/eps-devcontainers
 LABEL org.opencontainers.image.description="EPS fhir facade devcontainer"
 LABEL org.opencontainers.image.licenses=MIT
@@ -18,3 +34,14 @@ COPY .tool-versions /tmp/.tool-versions
 RUN cat /tmp/.tool-versions >> /home/vscode/.tool-versions
 
 RUN ./vscode_install.sh
+
+USER root
+# store version info in VERSION.txt for reference
+RUN echo "[[ ${CONTAINER_NAME} ]]" >> "${SCRIPTS_DIR}/VERSION.txt" && \
+    echo "BASE_VERSION=${BASE_VERSION}" >> "${SCRIPTS_DIR}/VERSION.txt" && \
+    echo "DOCKER_TAG=${DOCKER_TAG}" >> "${SCRIPTS_DIR}/VERSION.txt" && \
+    echo "IMAGE_TAG=${IMAGE_TAG}" >> "${SCRIPTS_DIR}/VERSION.txt" && \
+    echo "" >> "${SCRIPTS_DIR}/VERSION.txt"
+
+USER vscode
+WORKDIR /home/vscode

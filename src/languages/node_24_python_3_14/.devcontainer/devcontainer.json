@@ -6,8 +6,10 @@
     "build": {
       "dockerfile": "../../../common/Dockerfile",
       "args": {
+        "CONTAINER_NAME": "eps_devcontainer_${localEnv:CONTAINER_NAME}",
+        "DOCKER_TAG": "${localEnv:DOCKER_TAG}",
         "BASE_VERSION": "${localEnv:BASE_VERSION}",
-        "CONTAINER_NAME": "eps_devcontainer_node_24_python_3_14"
+        "IMAGE_TAG": "${localEnv:IMAGE_TAG}"
       },
       "context": "."
     },
