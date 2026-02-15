@@ -131,6 +131,7 @@ jobs:
         run: |
           echo "Pushing image..."
           docker push "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}"
+          echo "Tagging image with build timestamp annotation..."
           BUILD_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           export BUILD_TIMESTAMP
           docker buildx imagetools create \
