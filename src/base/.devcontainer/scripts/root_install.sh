@@ -69,5 +69,7 @@ curl -L https://raw.githubusercontent.com/NHSDigital/software-engineering-qualit
 
 chown -R vscode:vscode /home/vscode
 mkdir -p /work
-chown -R vscode:vscode /work
-chmod -R 777 /work
+
+addgroup githubrunner -gid 1001
+adduser githubrunner -uid 1001 -gid 1001 --shell /bin/bash --disabled-password -c "Githubrunner user"
+echo "githubrunner ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers

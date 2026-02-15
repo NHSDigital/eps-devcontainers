@@ -37,3 +37,10 @@ RUN ./vscode_install.sh
 
 # Switch back to root to install the devcontainer CLI globally
 USER root
+
+RUN cp -R /home/vscode/.asdf /home/githubrunner/.asdf && \
+    cp /home/vscode/.tool-versions.asdf /home/githubrunner/.tool-versions.asdf && \
+    cp /home/vscode/.tool-versions /home/githubrunner/.tool-versions && \
+    cp -R /home/vscode/.config /home/githubrunner/.config && \
+    cp -R /home/vscode/.local /home/githubrunner/.local && \
+    chown -R githubrunner:githubrunner /home/githubrunner/
