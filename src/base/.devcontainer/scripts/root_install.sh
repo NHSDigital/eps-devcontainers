@@ -67,9 +67,12 @@ mkdir -p /usr/share/secrets-scanner
 chmod 755 /usr/share/secrets-scanner
 curl -L https://raw.githubusercontent.com/NHSDigital/software-engineering-quality-framework/main/tools/nhsd-git-secrets/nhsd-rules-deny.txt -o /usr/share/secrets-scanner/nhsd-rules-deny.txt
 
-chown -R vscode:vscode /home/vscode
-mkdir -p /work
+# fix user and group ids for vscode user to be 1001 so it can be used by github actions
+requested_uid=1001
+requested_gid=1001
+current_uid="$(id -u vscode)"
+current_gid="$(id -g vscode)"
+if [ "${current_gid}" != "${requested_gid}" ]; then groupmod -g "${requested_gid}" vscode; fi
+if [ "${current_uid}" != "${requested_uid}" ]; then usermod -u "${requested_uid}" -g "${requested_gid}" vscode; fi
 
-addgroup githubrunner -gid 1001
-adduser githubrunner -uid 1001 -gid 1001 --shell /bin/bash --disabled-password -c "Githubrunner user"
-echo "githubrunner ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+chown -R vscode:vscode /home/vscode

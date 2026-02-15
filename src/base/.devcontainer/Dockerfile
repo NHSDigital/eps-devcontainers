@@ -22,8 +22,6 @@ LABEL org.opencontainers.image.containerName=${CONTAINER_NAME}
 LABEL org.opencontainers.image.authors="NHS England EPS Team"
 LABEL org.opencontainers.image.base.image="mcr.microsoft.com/devcontainers/base:ubuntu-22.04"
 
-
-
 COPY .tool-versions.asdf ${SCRIPTS_DIR}/${CONTAINER_NAME}/.tool-versions.asdf
 COPY --chmod=755 scripts ${SCRIPTS_DIR}/${CONTAINER_NAME}
 
@@ -40,10 +38,3 @@ RUN ./vscode_install.sh
 
 # Switch back to root to install the devcontainer CLI globally
 USER root
-
-RUN cp -R /home/vscode/.asdf /home/githubrunner/ && \
-    cp /home/vscode/.tool-versions.asdf /home/githubrunner/.tool-versions.asdf && \
-    cp /home/vscode/.tool-versions /home/githubrunner/.tool-versions && \
-    cp -R /home/vscode/.config /home/githubrunner/ && \
-    cp -R /home/vscode/.local /home/githubrunner/ && \
-    chown -R githubrunner:githubrunner /home/githubrunner/

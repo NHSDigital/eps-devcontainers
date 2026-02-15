@@ -35,16 +35,8 @@ USER vscode
 WORKDIR ${SCRIPTS_DIR}/${CONTAINER_NAME}
 COPY .tool-versions /tmp/.tool-versions
 RUN cat /tmp/.tool-versions >> /home/vscode/.tool-versions
-ENV PATH="/home/vscode/.asdf/shims/:$PATH"
 
 RUN ./vscode_install.sh
 
 # Switch back to root to install the devcontainer CLI globally
 USER root
-
-RUN cp -R /home/vscode/.asdf /home/githubrunner/ && \
-    cp /home/vscode/.tool-versions.asdf /home/githubrunner/.tool-versions.asdf && \
-    cp /home/vscode/.tool-versions /home/githubrunner/.tool-versions && \
-    cp -R /home/vscode/.config /home/githubrunner/ && \
-    cp -R /home/vscode/.local /home/githubrunner/ && \
-    chown -R githubrunner:githubrunner /home/githubrunner/
