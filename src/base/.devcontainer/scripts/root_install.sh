@@ -68,3 +68,5 @@ chmod 755 /usr/share/secrets-scanner
 curl -L https://raw.githubusercontent.com/NHSDigital/software-engineering-quality-framework/main/tools/nhsd-git-secrets/nhsd-rules-deny.txt -o /usr/share/secrets-scanner/nhsd-rules-deny.txt
 
 chown -R vscode:vscode /home/vscode
+mkdir -p /work
+chown -R vscode:vscode /work
