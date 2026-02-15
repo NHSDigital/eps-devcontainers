@@ -94,15 +94,17 @@ CONTAINER_NAME=base \
 Language images
 ```
 CONTAINER_NAME=node_24_python_3_12 \
-  BASE_VERSION_TAG=latest \
+  BASE_VERSION_TAG=local-build \
   BASE_FOLDER=languages \
+  IMAGE_TAG=local-build \
   make build-image
 ``` 
 Project images
 ```
 CONTAINER_NAME=fhir_facade_api \
-  BASE_VERSION_TAG=latest \
+  BASE_VERSION_TAG=local-build \
   BASE_FOLDER=projects \
+  IMAGE_TAG=local-build \
   make build-image
 ``` 
 
