@@ -19,6 +19,9 @@ LABEL org.opencontainers.image.description="EPS devcontainer ${CONTAINER_NAME}:$
 LABEL org.opencontainers.image.licenses=MIT
 LABEL org.opencontainers.image.version=${IMAGE_TAG}
 LABEL org.opencontainers.image.containerName=${CONTAINER_NAME}
+LABEL org.opencontainers.image.authors="NHS England EPS Team"
+LABEL org.opencontainers.image.base.image="mcr.microsoft.com/devcontainers/base:ubuntu-22.04"
+
 
 
 COPY .tool-versions.asdf ${SCRIPTS_DIR}/${CONTAINER_NAME}/.tool-versions.asdf

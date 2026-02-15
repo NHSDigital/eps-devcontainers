@@ -135,6 +135,7 @@ jobs:
           export BUILD_TIMESTAMP
           docker buildx imagetools create \
             --annotation "index:org.opencontainers.image.created=${BUILD_TIMESTAMP}" \
+            --tag "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}" \
             "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}"
         env:
           DOCKER_TAG: ${{ inputs.docker_tag }}
@@ -178,6 +179,7 @@ jobs:
             --annotation "index:org.opencontainers.image.version=${DOCKER_TAG}" \
             --annotation "index:org.opencontainers.image.containerName=${CONTAINER_NAME}" \
             --annotation "index:org.opencontainers.image.created=${BUILD_TIMESTAMP}" \
+            --annotation "index:org.opencontainers.image.authors=NHS England EPS Team" \
             --tag "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}" \
             "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-amd64" \
             "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-arm64"
