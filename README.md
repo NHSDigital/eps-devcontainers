@@ -86,21 +86,21 @@ You can use these commands to build images
 Base image
 ```
 CONTAINER_NAME=base \
-  BASE_VERSION=latest \
+  BASE_VERSION_TAG=latest \
   BASE_FOLDER=. \
   make build-image
 ``` 
 Language images
 ```
 CONTAINER_NAME=node_24_python_3_12 \
-  BASE_VERSION=latest \
+  BASE_VERSION_TAG=latest \
   BASE_FOLDER=languages \
   make build-image
 ``` 
 Project images
 ```
 CONTAINER_NAME=fhir_facade_api \
-  BASE_VERSION=latest \
+  BASE_VERSION_TAG=latest \
   BASE_FOLDER=projects \
   make build-image
 ``` 
