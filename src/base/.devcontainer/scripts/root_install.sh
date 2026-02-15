@@ -70,3 +70,4 @@ curl -L https://raw.githubusercontent.com/NHSDigital/software-engineering-qualit
 chown -R vscode:vscode /home/vscode
 mkdir -p /work
 chown -R vscode:vscode /work
+chmod -R 777 /work

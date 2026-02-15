@@ -88,6 +88,7 @@ Base image
 CONTAINER_NAME=base \
   BASE_VERSION_TAG=latest \
   BASE_FOLDER=. \
+  IMAGE_TAG=local-build \
   make build-image
 ``` 
 Language images

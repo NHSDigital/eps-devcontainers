@@ -21,7 +21,7 @@ ENV IMAGE_TAG=${IMAGE_TAG}
 ENV TARGETARCH=${TARGETARCH}
 
 LABEL org.opencontainers.image.source=https://github.com/NHSDigital/eps-devcontainers
-LABEL org.opencontainers.image.description="EPS devcontainer ${CONTAINER_NAME}${IMAGE_TAG}"
+LABEL org.opencontainers.image.description="EPS devcontainer ${CONTAINER_NAME}:${IMAGE_TAG}"
 LABEL org.opencontainers.image.licenses=MIT
 LABEL org.opencontainers.image.version=${IMAGE_TAG}
 LABEL org.opencontainers.image.baseImage=${BASE_IMAGE}
