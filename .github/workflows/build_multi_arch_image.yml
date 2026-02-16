@@ -82,13 +82,11 @@ jobs:
 
         env:
           ARCHITECTURE: '${{ matrix.arch }}'
-          DOCKER_TAG: '${{ inputs.docker_tag }}'
           CONTAINER_NAME: '${{ inputs.container_name }}'
-          BASE_VERSION: ${{ inputs.docker_tag}}
-          IMAGE_TAG: ":${{ inputs.docker_tag }}-${{ matrix.arch }}"
+          MULTI_ARCH_TAG: '${{ inputs.docker_tag }}'
+          BASE_VERSION_TAG: ${{ inputs.docker_tag}}
+          IMAGE_TAG: "${{ inputs.docker_tag }}-${{ matrix.arch }}"
           BASE_FOLDER: "${{ inputs.base_folder }}"
-          VSCODE_UID: "1001"
-          VSCODE_GID: "1001"
       - name: Check docker vulnerabilities - json output
         uses: aquasecurity/trivy-action@c1824fd6edce30d7ab345a9989de00bbd46ef284
         with:
@@ -133,6 +131,7 @@ jobs:
         run: |
           echo "Pushing image..."
           docker push "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}"
+          echo "## PUSHED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}" >> "$GITHUB_STEP_SUMMARY"
         env:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'
@@ -143,6 +142,7 @@ jobs:
           docker tag "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}" "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-${ARCHITECTURE}"
           echo "Pushing image..."
           docker push "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-${ARCHITECTURE}"
+          echo "## PUSHED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-${ARCHITECTURE}" >> "$GITHUB_STEP_SUMMARY"
         env:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'
@@ -166,10 +166,20 @@ jobs:
 
       - name: Push multi-arch tagged image
         run: |
-          docker buildx imagetools create -t "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}" \
+          BUILD_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          export BUILD_TIMESTAMP
+          docker buildx imagetools create \
+            --annotation "index:org.opencontainers.image.source=https://github.com/NHSDigital/eps-devcontainers" \
+            --annotation "index:org.opencontainers.image.description=EPS devcontainer ${CONTAINER_NAME}:${DOCKER_TAG}" \
+            --annotation "index:org.opencontainers.image.licenses=MIT" \
+            --annotation "index:org.opencontainers.image.version=${DOCKER_TAG}" \
+            --annotation "index:org.opencontainers.image.containerName=${CONTAINER_NAME}" \
+            --annotation "index:org.opencontainers.image.created=${BUILD_TIMESTAMP}" \
+            --annotation "index:org.opencontainers.image.authors=NHS England EPS Team" \
+            --tag "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}" \
             "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-amd64" \
             "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-arm64"
-            echo "## PUSHED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}" >> "$GITHUB_STEP_SUMMARY"
+          echo "## PUSHED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}" >> "$GITHUB_STEP_SUMMARY"
         env:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'

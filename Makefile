@@ -21,13 +21,12 @@ install-node:
 install-hooks: install-python
 	poetry run pre-commit install --install-hooks --overwrite
 
-build-image: guard-CONTAINER_NAME guard-BASE_VERSION guard-BASE_FOLDER
+build-image: guard-CONTAINER_NAME guard-BASE_VERSION_TAG guard-BASE_FOLDER guard-IMAGE_TAG
 	npx devcontainer build \
 		--workspace-folder ./src/$${BASE_FOLDER}/$${CONTAINER_NAME} \
 		--push false \
 		--cache-from "${CONTAINER_PREFIX}$${CONTAINER_NAME}:latest" \
-		--label "org.opencontainers.image.revision=$$DOCKER_TAG" \
-		--image-name "${CONTAINER_PREFIX}$${CONTAINER_NAME}${IMAGE_TAG}"
+		--image-name "${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}"
 
 scan-image: guard-CONTAINER_NAME guard-BASE_FOLDER
 	@combined="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore_combined.yaml"; \
@@ -41,9 +40,9 @@ scan-image: guard-CONTAINER_NAME guard-BASE_FOLDER
 		--config src/${BASE_FOLDER}/${CONTAINER_NAME}/trivy.yaml \
 		--scanners vuln \
 		--exit-code 1 \
-		--format table "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 
+		--format table "${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}" 
 
-scan-image-json: guard-CONTAINER_NAME guard-BASE_FOLDER
+scan-image-json: guard-CONTAINER_NAME guard-BASE_FOLDER guard-IMAGE_TAG
 	@combined="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore_combined.yaml"; \
 	common="src/common/.trivyignore.yaml"; \
 	specific="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore.yaml"; \
@@ -57,11 +56,11 @@ scan-image-json: guard-CONTAINER_NAME guard-BASE_FOLDER
 		--scanners vuln \
 		--exit-code 1 \
 		--format json \
-		--output .out/scan_results_docker.json "${CONTAINER_PREFIX}$${CONTAINER_NAME}" 
+		--output .out/scan_results_docker.json "${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}" 
 
-shell-image: guard-CONTAINER_NAME
+shell-image: guard-CONTAINER_NAME guard-IMAGE_TAG
 	docker run -it \
-	"${CONTAINER_PREFIX}$${CONTAINER_NAME}${IMAGE_TAG}"  \
+	"${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}"  \
 	bash
 
 lint: lint-githubactions

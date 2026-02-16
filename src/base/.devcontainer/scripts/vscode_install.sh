@@ -24,7 +24,3 @@ asdf plugin add yq https://github.com/sudermanjr/asdf-yq.git
 # install base asdf versions of common tools
 cd /home/vscode
 asdf install
-
-# setup gitsecrets
-git-secrets --register-aws --global
-git-secrets --add-provider --global -- cat /usr/share/secrets-scanner/nhsd-rules-deny.txt
