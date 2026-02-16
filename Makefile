@@ -42,7 +42,7 @@ scan-image: guard-CONTAINER_NAME guard-BASE_FOLDER
 		--exit-code 1 \
 		--format table "${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}" 
 
-scan-image-json: guard-CONTAINER_NAME guard-BASE_FOLDER
+scan-image-json: guard-CONTAINER_NAME guard-BASE_FOLDER guard-IMAGE_TAG
 	@combined="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore_combined.yaml"; \
 	common="src/common/.trivyignore.yaml"; \
 	specific="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore.yaml"; \
@@ -58,7 +58,7 @@ scan-image-json: guard-CONTAINER_NAME guard-BASE_FOLDER
 		--format json \
 		--output .out/scan_results_docker.json "${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}" 
 
-shell-image: guard-CONTAINER_NAME
+shell-image: guard-CONTAINER_NAME guard-IMAGE_TAG
 	docker run -it \
 	"${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}"  \
 	bash
