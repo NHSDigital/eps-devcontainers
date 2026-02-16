@@ -12,10 +12,6 @@
         "IMAGE_TAG": "${localEnv:IMAGE_TAG}"
       }
     },
-    "runArgs": [
-      "--network=host"
-    ],
-    "remoteEnv": { "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}" },
     "features": {
       "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
         "version": "latest",

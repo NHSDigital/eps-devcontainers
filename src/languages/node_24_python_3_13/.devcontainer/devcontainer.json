@@ -13,10 +13,6 @@
       },
       "context": "."
     },
-    "runArgs": [
-      "--network=host"
-    ],
-    "remoteEnv": { "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}" },
     "features": {}
   }
   

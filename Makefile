@@ -4,6 +4,10 @@ ifneq ($(strip $(PLATFORM)),)
 PLATFORM_FLAG=--platform $(PLATFORM)
 endif
 
+ifeq ($(strip $(NO_CACHE)),true)
+NO_CACHE_FLAG=--no-cache
+endif
+
 guard-%:
 	@ if [ "${${*}}" = "" ]; then \
 		echo "Environment variable $* not set"; \
@@ -24,6 +28,7 @@ install-hooks: install-python
 build-image: guard-CONTAINER_NAME guard-BASE_VERSION_TAG guard-BASE_FOLDER guard-IMAGE_TAG
 	npx devcontainer build \
 		--workspace-folder ./src/$${BASE_FOLDER}/$${CONTAINER_NAME} \
+		$(NO_CACHE_FLAG) \
 		--push false \
 		--cache-from "${CONTAINER_PREFIX}$${CONTAINER_NAME}:latest" \
 		--image-name "${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}"

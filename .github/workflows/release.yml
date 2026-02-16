@@ -46,3 +46,4 @@ jobs:
     with: 
       docker_tag: '${{ needs.tag_release.outputs.version_tag }}'
       tag_latest: true
+      NO_CACHE: true
