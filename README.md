@@ -61,29 +61,30 @@ You should not need to add any features as these are already baked into the imag
   "name": "eps-common-workflows",
   "build": {
     "dockerfile": "Dockerfile",
+    "context": "..",
     "args": {
       "DOCKER_GID": "${env:DOCKER_GID:}",
       "IMAGE_NAME": "node_24_python_3_14",
-      "IMAGE_VERSION": "v1.0.1",
+      "IMAGE_VERSION": "local-build",
       "USER_UID": "${localEnv:USER_ID:}",
       "USER_GID": "${localEnv:GROUP_ID:}"
-    },
-    "updateRemoteUserUID": false,
-    "postAttachCommand": "git-secrets --register-aws; git-secrets --add-provider -- cat /usr/share/secrets-scanner/nhsd-rules-deny.txt",
-    "mounts": [
-      "source=${env:HOME}${env:USERPROFILE}/.aws,target=/home/vscode/.aws,type=bind",
-      "source=${env:HOME}${env:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind",
-      "source=${env:HOME}${env:USERPROFILE}/.gnupg,target=/home/vscode/.gnupg,type=bind",
-      "source=${env:HOME}${env:USERPROFILE}/.npmrc,target=/home/vscode/.npmrc,type=bind"
-    ],
-    "containerUser": "vscode",
-    "remoteEnv": {
-      "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
-    },
-    "features": {},
-    "customizations": {
-      ... add any customisations you want here
     }
+  },
+  "postAttachCommand": "git-secrets --register-aws; git-secrets --add-provider -- cat /usr/share/secrets-scanner/nhsd-rules-deny.txt",
+  "mounts": [
+    "source=${env:HOME}${env:USERPROFILE}/.aws,target=/home/vscode/.aws,type=bind",
+    "source=${env:HOME}${env:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind",
+    "source=${env:HOME}${env:USERPROFILE}/.gnupg,target=/home/vscode/.gnupg,type=bind",
+    "source=${env:HOME}${env:USERPROFILE}/.npmrc,target=/home/vscode/.npmrc,type=bind"
+  ],
+  "updateRemoteUserUID": false,
+  "containerUser": "vscode",
+  "remoteEnv": {
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+  },
+  "features": {},
+  "customizations": {
+    ....
   }
 }
 ```
