@@ -68,7 +68,8 @@ You should not need to add any features as these are already baked into the imag
       "IMAGE_VERSION": "local-build",
       "USER_UID": "${localEnv:USER_ID:}",
       "USER_GID": "${localEnv:GROUP_ID:}"
-    }
+    },
+    "updateRemoteUserUID": false,
   },
   "postAttachCommand": "git-secrets --register-aws; git-secrets --add-provider -- cat /usr/share/secrets-scanner/nhsd-rules-deny.txt",
   "mounts": [
@@ -77,7 +78,6 @@ You should not need to add any features as these are already baked into the imag
     "source=${env:HOME}${env:USERPROFILE}/.gnupg,target=/home/vscode/.gnupg,type=bind",
     "source=${env:HOME}${env:USERPROFILE}/.npmrc,target=/home/vscode/.npmrc,type=bind"
   ],
-  "updateRemoteUserUID": false,
   "containerUser": "vscode",
   "remoteEnv": {
     "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
@@ -154,7 +154,7 @@ CONTAINER_NAME=base \
 ``` 
 Language images
 ```
-CONTAINER_NAME=node_24_python_3_14 \
+CONTAINER_NAME=node_24_python_3_13 \
   BASE_VERSION_TAG=local-build \
   BASE_FOLDER=languages \
   IMAGE_TAG=local-build \
@@ -236,5 +236,5 @@ Once you have the scan output, use the following to generate a new .trivyignore 
 poetry run python \
   scripts/trivy_to_trivyignore.py \
   --input .out/scan_results_docker.json \
-  --output src/common/.trivyignore.new.yaml 
+  --output src/projects/fhir_facade_api/.trivyignore.new.yaml 
 ```
