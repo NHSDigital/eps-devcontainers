@@ -65,3 +65,43 @@ vulnerabilities:
     purls:
       - "pkg:deb/ubuntu/firefox@147.0.3%2Bbuild1-0ubuntu0.22.04.1~mt1?arch=arm64&distro=ubuntu-22.04"
     expired_at: 2026-08-13
+  - id: CVE-2022-25235
+    statement: "expat: Malformed 2- and 3-byte UTF-8 sequences can lead to arbitrary code execution"
+    purls:
+      - "pkg:deb/ubuntu/firefox@147.0.4%2Bbuild1-0ubuntu0.22.04.1~mt1?arch=arm64&distro=ubuntu-22.04"
+    expired_at: 2026-08-16
+  - id: CVE-2022-25236
+    statement: "expat: Namespace-separator characters in \"xmlns[:prefix]\" attribute values can lead to arbitrary code execution"
+    purls:
+      - "pkg:deb/ubuntu/firefox@147.0.4%2Bbuild1-0ubuntu0.22.04.1~mt1?arch=arm64&distro=ubuntu-22.04"
+    expired_at: 2026-08-16
+  - id: CVE-2022-26485
+    statement: "Mozilla: Use-after-free in XSLT parameter processing"
+    purls:
+      - "pkg:deb/ubuntu/firefox@147.0.4%2Bbuild1-0ubuntu0.22.04.1~mt1?arch=arm64&distro=ubuntu-22.04"
+    expired_at: 2026-08-16
+  - id: CVE-2022-26486
+    statement: "Mozilla: Use-after-free in WebGPU IPC Framework"
+    purls:
+      - "pkg:deb/ubuntu/firefox@147.0.4%2Bbuild1-0ubuntu0.22.04.1~mt1?arch=arm64&distro=ubuntu-22.04"
+    expired_at: 2026-08-16
+  - id: CVE-2022-25235
+    statement: "expat: Malformed 2- and 3-byte UTF-8 sequences can lead to arbitrary code execution"
+    purls:
+      - "pkg:deb/ubuntu/firefox@147.0.4%2Bbuild1-0ubuntu0.22.04.1~mt1?arch=amd64&distro=ubuntu-22.04"
+    expired_at: 2026-08-16
+  - id: CVE-2022-25236
+    statement: "expat: Namespace-separator characters in \"xmlns[:prefix]\" attribute values can lead to arbitrary code execution"
+    purls:
+      - "pkg:deb/ubuntu/firefox@147.0.4%2Bbuild1-0ubuntu0.22.04.1~mt1?arch=amd64&distro=ubuntu-22.04"
+    expired_at: 2026-08-16
+  - id: CVE-2022-26485
+    statement: "Mozilla: Use-after-free in XSLT parameter processing"
+    purls:
+      - "pkg:deb/ubuntu/firefox@147.0.4%2Bbuild1-0ubuntu0.22.04.1~mt1?arch=amd64&distro=ubuntu-22.04"
+    expired_at: 2026-08-16
+  - id: CVE-2022-26486
+    statement: "Mozilla: Use-after-free in WebGPU IPC Framework"
+    purls:
+      - "pkg:deb/ubuntu/firefox@147.0.4%2Bbuild1-0ubuntu0.22.04.1~mt1?arch=amd64&distro=ubuntu-22.04"
+    expired_at: 2026-08-16
