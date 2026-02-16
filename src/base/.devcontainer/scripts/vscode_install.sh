@@ -24,7 +24,3 @@ asdf plugin add yq https://github.com/sudermanjr/asdf-yq.git
 # install base asdf versions of common tools
 cd /home/vscode
 asdf install
-
-# create .ssh/known_hosts to prevent devcontainer copying from localhost
-mkdir -p /home/vscode/.ssh
-echo "" > /home/vscode/.ssh/known_hosts
