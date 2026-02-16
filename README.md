@@ -225,10 +225,12 @@ You can generate a .trivyignore file for known vulnerabilities by either downloa
 
 If generated locally, then the output goes into .out/scan_results_docker.json
 
-Once you have the scan output, use the following to generate a .trivyignore
+Once you have the scan output, use the following to generate a new .trivyignore file called .trivyignore.new.yaml. Note this will overwrite the output file when run so it should point to a new file and the contents merged with existing .trivyignore file
+
+
 ```
 poetry run python \
   scripts/trivy_to_trivyignore.py \
   --input .out/scan_results_docker.json \
-  --output src/common/.trivyignore.yaml 
+  --output src/common/.trivyignore.new.yaml 
 ```
