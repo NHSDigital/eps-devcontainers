@@ -7,3 +7,6 @@ asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
 
 asdf install python
 asdf install
+
+# install cfn-lint
+pip install --user cfn-lint

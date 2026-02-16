@@ -67,6 +67,11 @@ mkdir -p /usr/share/secrets-scanner
 chmod 755 /usr/share/secrets-scanner
 curl -L https://raw.githubusercontent.com/NHSDigital/software-engineering-quality-framework/main/tools/nhsd-git-secrets/nhsd-rules-deny.txt -o /usr/share/secrets-scanner/nhsd-rules-deny.txt
 
+# get cfn-guard ruleset
+wget -O /tmp/ruleset.zip https://github.com/aws-cloudformation/aws-guard-rules-registry/releases/download/1.0.2/ruleset-build-v1.0.2.zip >/dev/null 2>&1
+mkdir -p "${SCRIPTS_DIR}/cfnguard_rulesets"
+unzip /tmp/ruleset.zip -d "${SCRIPTS_DIR}/cfnguard_rulesets" >/dev/null 2>&1
+
 # fix user and group ids for vscode user to be 1001 so it can be used by github actions
 requested_uid=1001
 requested_gid=1001
