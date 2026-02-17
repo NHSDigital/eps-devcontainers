@@ -71,3 +71,8 @@ curl -L https://raw.githubusercontent.com/NHSDigital/software-engineering-qualit
 wget -O /tmp/ruleset.zip https://github.com/aws-cloudformation/aws-guard-rules-registry/releases/download/1.0.2/ruleset-build-v1.0.2.zip >/dev/null 2>&1
 mkdir -p "${SCRIPTS_DIR}/cfnguard_rulesets"
 unzip /tmp/ruleset.zip -d "${SCRIPTS_DIR}/cfnguard_rulesets" >/dev/null 2>&1
+rm /tmp/ruleset.zip
+
+# clean up
+apt-get clean
+rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
