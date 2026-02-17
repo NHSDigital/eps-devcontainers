@@ -11,7 +11,7 @@ ENV TARGETARCH=${TARGETARCH}
 
 COPY .tool-versions.asdf ${SCRIPTS_DIR}/${CONTAINER_NAME}/.tool-versions.asdf
 COPY --chmod=755 scripts/root_install.sh ${SCRIPTS_DIR}/${CONTAINER_NAME}/root_install.sh
-COPY --chmod=755 makefiles ${SCRIPTS_DIR}/makefiles
+COPY --chmod=755 Mk ${SCRIPTS_DIR}/Mk
 
 WORKDIR ${SCRIPTS_DIR}/${CONTAINER_NAME}
 RUN ./root_install.sh
