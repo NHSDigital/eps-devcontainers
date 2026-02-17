@@ -8,8 +8,6 @@ Images are built using using https://github.com/devcontainers/cli.
 
 We build a base image based on mcr.microsoft.com/devcontainers/base:ubuntu-22.04 that other images are then based on
 
-The images have vsocde user setup as user 1001 so that they can be used in github actions
-
 The base image contains
  - latest os packages
  - asdf
@@ -109,11 +107,12 @@ This job should be used in github actions wherever you need to get the dev conta
           echo "DEVCONTAINER_IMAGE_VERSION=$DEVCONTAINER_VERSION" >> "$GITHUB_OUTPUT"
 ```
 # Project structure
-We have 3 types of dev container. These are defined under src
+We have 4 types of dev container. These are defined under src
 
 `base` - this is the base image that all others are based on.   
 `languages` - this installs specific versions of node and python.   
-`projects` - this is used for projects where more customization is needed than just a base language image
+`projects` - this is used for projects where more customization is needed than just a base language image.   
+`githubactions` - this just takes an existing image and remaps vscode user to be 1001 so it can be used by github actions.   
 
 Each image to be built contains a .devcontainer folder that defines how the devcontainer should be built. At a minimum, this should contain a devcontainer.json file. See https://containers.dev/implementors/json_reference/ for options for this
 
@@ -125,6 +124,7 @@ We use trivy to scan for vulnerabilities in the built docker images. Known vulne
 For each pull request, and merge to main, images are built and scanned using trivy, but the images are not pushed to github container registry
 Docker images are built for each pull request, and on merges to main.   
 Docker images are built for amd64 and arm64 architecture, and a combined manifest is created and pushed as part of the build.   
+Images are also created with user vscode mapped to user id 1001 so they can be used by github actions.
 
 The base image is built first, and then language images, and finally project images. 
 
@@ -132,6 +132,7 @@ Docker images are scanned for vulnerabilities using trivy as part of a build ste
 
 For pull requests, images are tagged with the pr-<pull request id>-<short commit sha>.   
 For merges to main, images are tagged with the <short commit sha>.   
+Github actions images are tagged with githubactions-<tag>
 
 When a pull request is merged to main or closed, all associated images are deleted from the registry using the github workflow delete_old_images
 
@@ -168,7 +169,6 @@ CONTAINER_NAME=fhir_facade_api \
   IMAGE_TAG=local-build \
   make build-image
 ``` 
-
 Github actions image
 ```
 BASE_IMAGE_NAME=base \
@@ -245,3 +245,38 @@ poetry run python \
   --input .out/scan_results_docker.json \
   --output src/projects/fhir_facade_api/.trivyignore.new.yaml 
 ```
+
+## Common makefile targets
+The common makefiles are defined in `src/base/.devcontainer/makefiles` and are included from `common.mk`.
+
+You should add this to the end of project Makefile to include them
+```
+%:
+	@$(MAKE) -f /usr/local/share/eps/makefiles/common.mk $@
+```
+
+Build targets (`build.mk`)
+- `install` - placeholder target (currently not implemented)
+- `install-node` - placeholder target (currently not implemented)
+- `docker-build` - placeholder target (currently not implemented)
+- `compile` - placeholder target (currently not implemented)
+
+Check targets (`check.mk`)
+- `lint` - placeholder target (currently not implemented)
+- `test` - placeholder target (currently not implemented)
+- `shellcheck` - runs shellcheck on `scripts/*.sh` and `.github/scripts/*.sh` when files exist
+- `cfn-lint` - runs `cfn-lint` against `cloudformation/**/*.yml|yaml` and `SAMtemplates/**/*.yml|yaml`
+- `cdk-synth` - placeholder target (currently not implemented)
+- `cfn-guard-sam-templates` - validates SAM templates against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
+- `cfn-guard-cloudformation` - validates `cloudformation` templates against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
+- `cfn-guard-cdk` - validates `cdk.out` against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
+- `cfn-guard-terraform` - validates `terraform_plans` against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
+
+Trivy targets (`trivy.mk`)
+- `trivy-license-check` - runs Trivy license scan (HIGH/CRITICAL) and writes `.trivy_out/license_scan.txt`
+- `trivy-generate-sbom` - generates CycloneDX SBOM at `.trivy_out/sbom.cdx.json`
+- `trivy-scan-python` - scans Python dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_python.txt`
+- `trivy-scan-node` - scans Node dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_node.txt`
+- `trivy-scan-go` - scans Go dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_go.txt`
+- `trivy-scan-java` - scans Java dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_java.txt`
+- `trivy-scan-docker` - scans a built image (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_docker.txt` (requires `DOCKER_IMAGE`), for example:
