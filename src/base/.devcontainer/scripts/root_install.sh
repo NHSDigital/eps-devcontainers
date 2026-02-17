@@ -71,13 +71,3 @@ curl -L https://raw.githubusercontent.com/NHSDigital/software-engineering-qualit
 wget -O /tmp/ruleset.zip https://github.com/aws-cloudformation/aws-guard-rules-registry/releases/download/1.0.2/ruleset-build-v1.0.2.zip >/dev/null 2>&1
 mkdir -p "${SCRIPTS_DIR}/cfnguard_rulesets"
 unzip /tmp/ruleset.zip -d "${SCRIPTS_DIR}/cfnguard_rulesets" >/dev/null 2>&1
-
-# fix user and group ids for vscode user to be 1001 so it can be used by github actions
-requested_uid=1001
-requested_gid=1001
-current_uid="$(id -u vscode)"
-current_gid="$(id -g vscode)"
-if [ "${current_gid}" != "${requested_gid}" ]; then groupmod -g "${requested_gid}" vscode; fi
-if [ "${current_uid}" != "${requested_uid}" ]; then usermod -u "${requested_uid}" -g "${requested_gid}" vscode; fi
-
-chown -R vscode:vscode /home/vscode

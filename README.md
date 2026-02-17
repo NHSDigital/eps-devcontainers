@@ -169,6 +169,13 @@ CONTAINER_NAME=fhir_facade_api \
   make build-image
 ``` 
 
+Github actions image
+```
+BASE_IMAGE_NAME=base \
+  BASE_IMAGE_TAG=local-build \
+  IMAGE_TAG=local-build \
+  make build-githubactions-image
+```
 ## Scanning images
 You can use these commands to scan images
 Base image
