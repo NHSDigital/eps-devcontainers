@@ -283,6 +283,13 @@ Check targets (`check.mk`)
 - `cfn-guard-terraform` - validates `terraform_plans` against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
 - `actionlint` - runs actionlint against github actions
 - `secret-scan` - runs git-secrets (including scanning history) against the repo
+- `guard-<ENVIRONMENT_VARIABLE>` - checks if an environment variable is set and errors if it is not
+
+Credentials targets (`credentials.mk`)
+- `aws-configure` - configures an AWS sso session
+- `aws-login` - Authorizes an sso session with AWS so aws cli tools can be used. You may still need to set AWS_PROFILE before running commands
+- `github-login` - Authorizes github cli to github with scope to read packages
+- `create-npmrc` - depends on `github-login`, then writes `.npmrc` with a GitHub Packages auth token and `@nhsdigital` registry
 
 Trivy targets (`trivy.mk`)
 - `trivy-license-check` - runs Trivy license scan (HIGH/CRITICAL) and writes `.trivy_out/license_scan.txt`
