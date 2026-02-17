@@ -79,7 +79,7 @@ trivy-scan-java:
 		--output .trivy_out/dependency_results_java.txt \
 		--format table
 
-trivy-scan-docker:
+trivy-scan-docker: guard-DOCKER_IMAGE
 	mkdir -p .trivy_out/
 	trivy image $${DOCKER_IMAGE} \
 		--scanners vuln \
