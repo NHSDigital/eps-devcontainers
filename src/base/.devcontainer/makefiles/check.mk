@@ -75,3 +75,9 @@ cfn-guard-terraform:
 				> ".cfn_guard_out/terraform_$$ruleset.txt"; \
 		done\
 	'
+
+actionlint:
+	actionlint
+
+secret-scan:
+	git-secrets --scan-history .

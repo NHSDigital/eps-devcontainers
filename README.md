@@ -271,6 +271,8 @@ Check targets (`check.mk`)
 - `cfn-guard-cloudformation` - validates `cloudformation` templates against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
 - `cfn-guard-cdk` - validates `cdk.out` against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
 - `cfn-guard-terraform` - validates `terraform_plans` against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
+- `actionlint` - runs actionlint against github actions
+- `secret-scan` - runs git-secrets (including scanning history) against the repo
 
 Trivy targets (`trivy.mk`)
 - `trivy-license-check` - runs Trivy license scan (HIGH/CRITICAL) and writes `.trivy_out/license_scan.txt`
