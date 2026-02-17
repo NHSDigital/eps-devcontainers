@@ -1,5 +1,25 @@
 #!/usr/bin/env bash
 
+DRY_RUN=false
+
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+		--dry-run|-n)
+			DRY_RUN=true
+			shift
+			;;
+		--help|-h)
+			echo "Usage: $0 [--dry-run]"
+			exit 0
+			;;
+		*)
+			echo "Unknown option: $1" >&2
+			echo "Usage: $0 [--dry-run]" >&2
+			exit 1
+			;;
+	esac
+done
+
 get_container_package_name() {
 	local container_name=$1
 
@@ -40,6 +60,7 @@ delete_pr_images() {
 	tags=$(jq -r '[.[].metadata.container.tags[]?] | unique | .[]' <<<"${versions_json}")
 
 	if [[ -z "${tags}" ]]; then
+		echo "No tags found for container ${container_name}, skipping."
 		return 0
 	fi
 
@@ -47,9 +68,10 @@ delete_pr_images() {
 		local pull_request
 		if [[ "${tag}" =~ ^pr-([0-9]+)- ]]; then
 			pull_request=${BASH_REMATCH[1]}
-		elif [[ "${tag}" =~ ^githubactions-pr-([0-9]+)$ ]]; then
+		elif [[ "${tag}" =~ ^githubactions-pr-([0-9]+)- ]]; then
 			pull_request=${BASH_REMATCH[1]}
 		else
+			echo "Tag ${tag} does not match expected PR tag format, skipping."
 			continue
 		fi
 
@@ -72,11 +94,15 @@ delete_pr_images() {
 				<<<"${versions_json}" \
 				| while IFS= read -r version_id; do
 					if [[ -n "${version_id}" ]]; then
-                        echo "Deleting image with tag ${tag} (version ID: ${version_id}) from container ${container_name}..."
-						gh api \
-						 	-H "Accept: application/vnd.github+json" \
-						 	-X DELETE \
-						 	"/orgs/nhsdigital/packages/container/${package_name}/versions/${version_id}"
+						if [[ "${DRY_RUN}" == "true" ]]; then
+							echo "[DRY RUN] Would delete image with tag ${tag} (version ID: ${version_id}) from container ${container_name}."
+						else
+							echo "Deleting image with tag ${tag} (version ID: ${version_id}) from container ${container_name}..."
+							gh api \
+						 		-H "Accept: application/vnd.github+json" \
+						 		-X DELETE \
+						 		"/orgs/nhsdigital/packages/container/${package_name}/versions/${version_id}"
+						fi
 					fi
 				done
 	done <<<"${tags}"
