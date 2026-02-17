@@ -11,12 +11,9 @@ RUN requested_uid=1001 \
 	&& current_uid="$(id -u vscode)" \
 	&& current_gid="$(id -g vscode)" \
 	&& if [ "${current_gid}" != "${requested_gid}" ]; then groupmod -g "${requested_gid}" vscode; fi \
-	&& if [ "${current_uid}" != "${requested_uid}" ]; then usermod -u "${requested_uid}" -g "${requested_gid}" vscode; fi \
-	&& mkdir -p /github \
-	&& usermod -d /github/home -m vscode \
-	&& chown -R vscode:vscode /github/home
+	&& if [ "${current_uid}" != "${requested_uid}" ]; then usermod -u "${requested_uid}" -g "${requested_gid}" vscode; fi
 
-ENV PATH="/github/home/.asdf/shims/:/github/home/.guard/bin/:$PATH:/root_path_mod"
 USER vscode
-ENV PATH="/github/home/.asdf/shims/:/github/home/.guard/bin/:$PATH:/vscode_path_mod"
+ENV PATH="/home/vscode/.asdf/shims/:/home/vscode/.guard/bin/:$PATH:/vscode_path_mod"
+ENV ASDF_DATA_DIR=/home/vscode/.asdf
 USER root
