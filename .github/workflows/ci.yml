@@ -43,6 +43,6 @@ jobs:
     needs: tag_release
     uses: ./.github/workflows/build_all_images.yml 
     with: 
-      docker_tag: '${{ needs.tag_release.outputs.version_tag }}'
+      docker_tag: 'ci-${{ needs.tag_release.outputs.version_tag }}'
       tag_latest: false
       NO_CACHE: false
