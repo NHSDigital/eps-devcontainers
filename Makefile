@@ -1,9 +1,5 @@
 CONTAINER_PREFIX=ghcr.io/nhsdigital/eps-devcontainers/
 
-ifneq ($(strip $(PLATFORM)),)
-PLATFORM_FLAG=--platform $(PLATFORM)
-endif
-
 ifeq ($(strip $(NO_CACHE)),true)
 NO_CACHE_FLAG=--no-cache
 endif
@@ -30,8 +26,19 @@ build-image: guard-CONTAINER_NAME guard-BASE_VERSION_TAG guard-BASE_FOLDER guard
 		--workspace-folder ./src/$${BASE_FOLDER}/$${CONTAINER_NAME} \
 		$(NO_CACHE_FLAG) \
 		--push false \
+		--output type=image,name="${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}",push=false,compression=zstd \
 		--cache-from "${CONTAINER_PREFIX}$${CONTAINER_NAME}:latest" \
 		--image-name "${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}"
+
+build-githubactions-image: guard-BASE_IMAGE_NAME guard-BASE_IMAGE_TAG guard-IMAGE_TAG
+	docker buildx build \
+		-f src/githubactions/Dockerfile \
+		$(NO_CACHE_FLAG) \
+		--build-arg BASE_IMAGE_NAME="$${BASE_IMAGE_NAME}" \
+		--build-arg BASE_IMAGE_TAG="$${BASE_IMAGE_TAG}" \
+		--load \
+		-t "${CONTAINER_PREFIX}$${BASE_IMAGE_NAME}:githubactions-$${IMAGE_TAG}" \
+		.
 
 scan-image: guard-CONTAINER_NAME guard-BASE_FOLDER
 	@combined="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore_combined.yaml"; \

@@ -131,11 +131,17 @@ jobs:
         env:
           ARCHITECTURE: '${{ matrix.arch }}'
           DOCKER_TAG: '${{ inputs.docker_tag }}'
-      - name: Push tagged image
+      - name: Push tagged image and rebuild for github actions
         run: |
           echo "Pushing image..."
           docker push "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}"
           echo "## PUSHED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "Rebuilding image for github actions with tag githubactions-${DOCKER_TAG}-${ARCHITECTURE}"
+          make build-githubactions-image BASE_IMAGE_NAME="${CONTAINER_NAME}" BASE_IMAGE_TAG="${DOCKER_TAG}-${ARCHITECTURE}" IMAGE_TAG="${DOCKER_TAG}-${ARCHITECTURE}" NO_CACHE="${{ inputs.NO_CACHE }}"
+          echo "Pushing github actions image..."
+          docker push "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-${DOCKER_TAG}-${ARCHITECTURE}"
+          echo "## PUSHED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-${DOCKER_TAG}-${ARCHITECTURE}" >> "$GITHUB_STEP_SUMMARY"
         env:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'
@@ -144,9 +150,14 @@ jobs:
         if: ${{ inputs.tag_latest }}
         run: |
           docker tag "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}" "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-${ARCHITECTURE}"
-          echo "Pushing image..."
+          echo "Pushing latest image..."
           docker push "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-${ARCHITECTURE}"
           echo "## PUSHED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-${ARCHITECTURE}" >> "$GITHUB_STEP_SUMMARY"
+
+          docker tag "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-${DOCKER_TAG}-${ARCHITECTURE}" "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-latest-${ARCHITECTURE}"
+          echo "Pushing github actions latest image..."
+          docker push "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-latest-${ARCHITECTURE}"
+          echo "## PUSHED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-latest-${ARCHITECTURE}" >> "$GITHUB_STEP_SUMMARY"
         env:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'
@@ -172,6 +183,7 @@ jobs:
         run: |
           BUILD_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           export BUILD_TIMESTAMP
+          echo "Creating combined image for tag ${DOCKER_TAG}"
           docker buildx imagetools create \
             --annotation "index:org.opencontainers.image.source=https://github.com/NHSDigital/eps-devcontainers" \
             --annotation "index:org.opencontainers.image.description=EPS devcontainer ${CONTAINER_NAME}:${DOCKER_TAG}" \
@@ -184,6 +196,20 @@ jobs:
             "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-amd64" \
             "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-arm64"
           echo "## PUSHED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "Creating combined image for tag githubactions-${DOCKER_TAG}"
+          docker buildx imagetools create \
+            --annotation "index:org.opencontainers.image.source=https://github.com/NHSDigital/eps-devcontainers" \
+            --annotation "index:org.opencontainers.image.description=EPS devcontainer ${CONTAINER_NAME}:${DOCKER_TAG}" \
+            --annotation "index:org.opencontainers.image.licenses=MIT" \
+            --annotation "index:org.opencontainers.image.version=${DOCKER_TAG}" \
+            --annotation "index:org.opencontainers.image.containerName=${CONTAINER_NAME}" \
+            --annotation "index:org.opencontainers.image.created=${BUILD_TIMESTAMP}" \
+            --annotation "index:org.opencontainers.image.authors=NHS England EPS Team" \
+            --tag "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-${DOCKER_TAG}" \
+            "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-${DOCKER_TAG}-amd64" \
+            "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-${DOCKER_TAG}-arm64"
+          echo "## PUSHED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-${DOCKER_TAG}" >> "$GITHUB_STEP_SUMMARY"
         env:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'
@@ -191,10 +217,18 @@ jobs:
       - name: Push multi-arch latest image
         if: ${{ inputs.tag_latest }}
         run: |
+          echo "Creating combined image for tag latest"
           docker buildx imagetools create -t "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest" \
             "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-amd64" \
             "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-arm64"
           echo "## PUSHED COMBINED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "Creating combined image for tag githubactions-latest"
+          docker buildx imagetools create -t "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-latest" \
+            "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-latest-amd64" \
+            "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-latest-arm64"
+          echo "## PUSHED COMBINED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-latest" >> "$GITHUB_STEP_SUMMARY"
+
         env:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'

@@ -27,8 +27,8 @@ apt-get -y install --no-install-recommends htop vim curl git build-essential \
     libffi-dev libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev libbz2-dev \
     zlib1g-dev unixodbc unixodbc-dev libsecret-1-0 libsecret-1-dev libsqlite3-dev \
     jq apt-transport-https ca-certificates gnupg-agent \
-    software-properties-common bash-completion make libbz2-dev \
-    libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev \
+    software-properties-common bash-completion make \
+    libreadline-dev wget llvm libncurses5-dev libncursesw5-dev \
     xz-utils tk-dev liblzma-dev netcat-traditional libyaml-dev uuid-runtime xxd unzip
 
 # Download correct SAM CLI for arch
@@ -67,12 +67,12 @@ mkdir -p /usr/share/secrets-scanner
 chmod 755 /usr/share/secrets-scanner
 curl -L https://raw.githubusercontent.com/NHSDigital/software-engineering-quality-framework/main/tools/nhsd-git-secrets/nhsd-rules-deny.txt -o /usr/share/secrets-scanner/nhsd-rules-deny.txt
 
-# fix user and group ids for vscode user to be 1001 so it can be used by github actions
-requested_uid=1001
-requested_gid=1001
-current_uid="$(id -u vscode)"
-current_gid="$(id -g vscode)"
-if [ "${current_gid}" != "${requested_gid}" ]; then groupmod -g "${requested_gid}" vscode; fi
-if [ "${current_uid}" != "${requested_uid}" ]; then usermod -u "${requested_uid}" -g "${requested_gid}" vscode; fi
+# get cfn-guard ruleset
+wget -O /tmp/ruleset.zip https://github.com/aws-cloudformation/aws-guard-rules-registry/releases/download/1.0.2/ruleset-build-v1.0.2.zip >/dev/null 2>&1
+mkdir -p "${SCRIPTS_DIR}/cfnguard_rulesets"
+unzip /tmp/ruleset.zip -d "${SCRIPTS_DIR}/cfnguard_rulesets" >/dev/null 2>&1
+rm /tmp/ruleset.zip
 
-chown -R vscode:vscode /home/vscode
+# clean up
+apt-get clean
+rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

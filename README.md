@@ -8,8 +8,6 @@ Images are built using using https://github.com/devcontainers/cli.
 
 We build a base image based on mcr.microsoft.com/devcontainers/base:ubuntu-22.04 that other images are then based on
 
-The images have vsocde user setup as user 1001 so that they can be used in github actions
-
 The base image contains
  - latest os packages
  - asdf
@@ -109,11 +107,12 @@ This job should be used in github actions wherever you need to get the dev conta
           echo "DEVCONTAINER_IMAGE_VERSION=$DEVCONTAINER_VERSION" >> "$GITHUB_OUTPUT"
 ```
 # Project structure
-We have 3 types of dev container. These are defined under src
+We have 4 types of dev container. These are defined under src
 
 `base` - this is the base image that all others are based on.   
 `languages` - this installs specific versions of node and python.   
-`projects` - this is used for projects where more customization is needed than just a base language image
+`projects` - this is used for projects where more customization is needed than just a base language image.   
+`githubactions` - this just takes an existing image and remaps vscode user to be 1001 so it can be used by github actions.   
 
 Each image to be built contains a .devcontainer folder that defines how the devcontainer should be built. At a minimum, this should contain a devcontainer.json file. See https://containers.dev/implementors/json_reference/ for options for this
 
@@ -122,16 +121,20 @@ Images under languages should point to a dockerfile under src/common that is bas
 We use trivy to scan for vulnerabilities in the built docker images. Known vulnerabilities in the base image are in `src/common/.trivyignore.yaml`. Vulnerabilities in specific images are in `.trivyignore.yaml` file in each images folder. These are combined before running a scan to exclude all known vulnerabilities
 
 # Pull requests and merge to main process
-For each pull request, and merge to main, images are built and scanned using trivy, but the images are not pushed to github container registry
-Docker images are built for each pull request, and on merges to main.   
-Docker images are built for amd64 and arm64 architecture, and a combined manifest is created and pushed as part of the build.   
+For each pull request, and merge to main, images are built and scanned using trivy, and pushed to github docker registry.      
+Docker images are built for amd64 and arm64 architecture, and a combined manifest is created and pushed as part of the build.
+The main images have a vscode user with id 1000. A separately tagged image is also created with user vscode mapped to user id 1001 so they can be used by github actions.
 
 The base image is built first, and then language images, and finally project images. 
 
 Docker images are scanned for vulnerabilities using trivy as part of a build step, and the build fails if vulnerabilities are found not in .trivyignore file.
 
-For pull requests, images are tagged with the pr-<pull request id>-<short commit sha>.   
-For merges to main, images are tagged with the <short commit sha>.   
+For pull requests, images are tagged with the pr-{pull request id}-{short commit sha}.   
+For merges to main, images are tagged with the {short commit sha}.   
+Github actions images are tagged with githubactions-{tag}
+Amd64 images are tagged with {tag}-amd64
+Arm64 images are tagged with {tag}-arm64
+Combined image manifest image is just tagged with {tag} so can be included in devcontainer.json and the correct image is pulled based on the host architecture.   
 
 When a pull request is merged to main or closed, all associated images are deleted from the registry using the github workflow delete_old_images
 
@@ -154,7 +157,7 @@ CONTAINER_NAME=base \
 ``` 
 Language images
 ```
-CONTAINER_NAME=node_24_python_3_13 \
+CONTAINER_NAME=node_24_python_3_14 \
   BASE_VERSION_TAG=local-build \
   BASE_FOLDER=languages \
   IMAGE_TAG=local-build \
@@ -168,7 +171,13 @@ CONTAINER_NAME=fhir_facade_api \
   IMAGE_TAG=local-build \
   make build-image
 ``` 
-
+Github actions image
+```
+BASE_IMAGE_NAME=base \
+  BASE_IMAGE_TAG=local-build \
+  IMAGE_TAG=local-build \
+  make build-githubactions-image
+```
 ## Scanning images
 You can use these commands to scan images
 Base image
@@ -213,12 +222,38 @@ CONTAINER_NAME=fhir_facade_api \
   IMAGE_TAG=local-build \
   make shell-image
 ``` 
+github actions image
+```
+CONTAINER_NAME=base \
+  IMAGE_TAG=githubactions-local-build \
+  make shell-image
+```
 
-## Using local or pull request images
+## Using local or pull request images in visual studio code
 You can use local or pull request images by changing IMAGE_VERSION in devcontainer.json.    
 For an image built locally, you should put the IMAGE_VERSION=local-build. 
 For an image built from a pull request, you should put the IMAGE_VERSION=<tag of image as show in pull request job>.  
 You can only use images built from a pull request for testing changes in github actions.   
+
+## Using images in github actions
+To use the image in github actions, you can use it in github actions using code like this
+```
+jobs:
+  my_job_name:
+    runs-on: ubuntu-22.04
+    container:
+      image: ghcr.io/nhsdigital/eps-devcontainers/<container name>:githubactions-<tag>
+      options: --user 1001:1001
+    steps:
+      - name: copy .tool-versions
+        run: |
+          cp /home/vscode/.tool-versions "$HOME/.tool-versions"
+      ... other steps ....
+```
+It is important that 
+- the image uses the tag starting githubactions-
+- there is `options: --user 1001:1001` below image
+- the first step copies .tool-versions from /home/vscode to $HOME/.tool-versions
 
 ## Generating a .trivyignore file
 You can generate a .trivyignore file for known vulnerabilities by either downloading the json scan output generated by the build, or by generating it locally using the scanning images commands above with a make target of scan-image-json
@@ -238,3 +273,49 @@ poetry run python \
   --input .out/scan_results_docker.json \
   --output src/projects/fhir_facade_api/.trivyignore.new.yaml 
 ```
+
+## Common makefile targets
+There are a set of common Makefiles that are defined in `src/base/.devcontainer/Mk` and are included from `common.mk`. These are installed to /usr/local/share/eps/Mk on the base image so are available for all containers.
+
+This should be added to the end of each projects Makefile to include them
+```
+%:
+	@$(MAKE) -f /usr/local/share/eps/Mk/common.mk $@
+```
+### Targets
+The following targets are defined. These are needed for quality checks to run. Some targets are project specific and so should be overridden in the projects Makefile.
+
+Build targets (`build.mk`)
+- `install` - placeholder target - should be overridden locally
+- `install-node` - placeholder target - should be overridden locally
+- `docker-build` - placeholder target - should be overridden locally
+- `compile` - placeholder target - should be overridden locally
+
+Check targets (`check.mk`)
+- `lint` - placeholder target - should be overridden locally
+- `test` - placeholder target - should be overridden locally
+- `shellcheck` - runs shellcheck on `scripts/*.sh` and `.github/scripts/*.sh` when files exist
+- `cfn-lint` - runs `cfn-lint` against `cloudformation/**/*.yml|yaml` and `SAMtemplates/**/*.yml|yaml`
+- `cdk-synth` - placeholder target - should be overridden locally
+- `cfn-guard-sam-templates` - validates SAM templates against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
+- `cfn-guard-cloudformation` - validates `cloudformation` templates against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
+- `cfn-guard-cdk` - validates `cdk.out` against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
+- `cfn-guard-terraform` - validates `terraform_plans` against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
+- `actionlint` - runs actionlint against github actions
+- `secret-scan` - runs git-secrets (including scanning history) against the repo
+- `guard-<ENVIRONMENT_VARIABLE>` - checks if an environment variable is set and errors if it is not
+
+Credentials targets (`credentials.mk`)
+- `aws-configure` - configures an AWS sso session
+- `aws-login` - Authorizes an sso session with AWS so aws cli tools can be used. You may still need to set AWS_PROFILE before running commands
+- `github-login` - Authorizes github cli to github with scope to read packages
+- `create-npmrc` - depends on `github-login`, then writes `.npmrc` with a GitHub Packages auth token and `@nhsdigital` registry
+
+Trivy targets (`trivy.mk`)
+- `trivy-license-check` - runs Trivy license scan (HIGH/CRITICAL) and writes `.trivy_out/license_scan.txt`
+- `trivy-generate-sbom` - generates CycloneDX SBOM at `.trivy_out/sbom.cdx.json`
+- `trivy-scan-python` - scans Python dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_python.txt`
+- `trivy-scan-node` - scans Node dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_node.txt`
+- `trivy-scan-go` - scans Go dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_go.txt`
+- `trivy-scan-java` - scans Java dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_java.txt`
+- `trivy-scan-docker` - scans a built image (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_docker.txt` (requires `DOCKER_IMAGE`), for example:

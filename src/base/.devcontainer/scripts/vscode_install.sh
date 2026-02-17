@@ -21,6 +21,9 @@ asdf plugin add terraform https://github.com/asdf-community/asdf-hashicorp.git
 asdf plugin add trivy https://github.com/zufardhiyaulhaq/asdf-trivy.git
 asdf plugin add yq https://github.com/sudermanjr/asdf-yq.git
 
+# install cfn-guard
+$ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/aws-cloudformation/cloudformation-guard/main/install-guard.sh | sh
+
 # install base asdf versions of common tools
 cd /home/vscode
 asdf install
