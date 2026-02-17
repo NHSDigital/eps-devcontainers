@@ -130,8 +130,8 @@ The base image is built first, and then language images, and finally project ima
 Docker images are scanned for vulnerabilities using trivy as part of a build step, and the build fails if vulnerabilities are found not in .trivyignore file.
 
 For pull requests, images are tagged with the pr-{pull request id}-{short commit sha}.   
-For merges to main, images are tagged with the {short commit sha}.   
-Github actions images are tagged with githubactions-{tag}
+For merges to main, images are tagged with the ci-{short commit sha}.   
+Github actions images are tagged with githubactions-{full tag}
 Amd64 images are tagged with {tag}-amd64
 Arm64 images are tagged with {tag}-arm64
 Combined image manifest image is just tagged with {tag} so can be included in devcontainer.json and the correct image is pulled based on the host architecture.   
