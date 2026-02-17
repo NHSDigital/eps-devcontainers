@@ -44,7 +44,7 @@ cfn-guard-cloudformation:
 		for ruleset in "$${rulesets[@]}"; do \
 			~/.guard/bin/cfn-guard validate \
 				--data cloudformation \
-				--rules "/tmp/ruleset/output/$$ruleset.guard" \
+				--rules "/usr/local/share/eps/cfnguard_rulesets/output/$$ruleset.guard" \
 				--show-summary fail \
 				> ".cfn_guard_out/cloudformation_$$ruleset.txt"; \
 		done\
@@ -57,7 +57,7 @@ cfn-guard-cdk:
 		for ruleset in "$${rulesets[@]}"; do \
 			~/.guard/bin/cfn-guard validate \
 				--data cdk.out \
-				--rules "/tmp/ruleset/output/$$ruleset.guard" \
+				--rules "/usr/local/share/eps/cfnguard_rulesets/output/$$ruleset.guard" \
 				--show-summary fail \
 				> ".cfn_guard_out/cdk_$$ruleset.txt"; \
 		done\
@@ -70,7 +70,7 @@ cfn-guard-terraform:
 		for ruleset in "$${rulesets[@]}"; do \
 			~/.guard/bin/cfn-guard validate \
 				--data terraform_plans \
-				--rules "/tmp/ruleset/output/$$ruleset.guard" \
+				--rules "/usr/local/share/eps/cfnguard_rulesets/output/$$ruleset.guard" \
 				--show-summary fail \
 				> ".cfn_guard_out/terraform_$$ruleset.txt"; \
 		done\
