@@ -121,18 +121,20 @@ Images under languages should point to a dockerfile under src/common that is bas
 We use trivy to scan for vulnerabilities in the built docker images. Known vulnerabilities in the base image are in `src/common/.trivyignore.yaml`. Vulnerabilities in specific images are in `.trivyignore.yaml` file in each images folder. These are combined before running a scan to exclude all known vulnerabilities
 
 # Pull requests and merge to main process
-For each pull request, and merge to main, images are built and scanned using trivy, but the images are not pushed to github container registry
-Docker images are built for each pull request, and on merges to main.   
-Docker images are built for amd64 and arm64 architecture, and a combined manifest is created and pushed as part of the build.   
-Images are also created with user vscode mapped to user id 1001 so they can be used by github actions.
+For each pull request, and merge to main, images are built and scanned using trivy, and pushed to github docker registry.      
+Docker images are built for amd64 and arm64 architecture, and a combined manifest is created and pushed as part of the build.
+The main images have a vscode user with id 1000. A separately tagged image is also created with user vscode mapped to user id 1001 so they can be used by github actions.
 
 The base image is built first, and then language images, and finally project images. 
 
 Docker images are scanned for vulnerabilities using trivy as part of a build step, and the build fails if vulnerabilities are found not in .trivyignore file.
 
-For pull requests, images are tagged with the pr-<pull request id>-<short commit sha>.   
-For merges to main, images are tagged with the <short commit sha>.   
-Github actions images are tagged with githubactions-<tag>
+For pull requests, images are tagged with the pr-{pull request id}-{short commit sha}.   
+For merges to main, images are tagged with the {short commit sha}.   
+Github actions images are tagged with githubactions-{tag}
+Amd64 images are tagged with {tag}-amd64
+Arm64 images are tagged with {tag}-arm64
+Combined image manifest image is just tagged with {tag} so can be included in devcontainer.json and the correct image is pulled based on the host architecture.   
 
 When a pull request is merged to main or closed, all associated images are deleted from the registry using the github workflow delete_old_images
 
@@ -221,7 +223,7 @@ CONTAINER_NAME=fhir_facade_api \
   make shell-image
 ``` 
 
-## Using local or pull request images
+## Using local or pull request images in visual studio code
 You can use local or pull request images by changing IMAGE_VERSION in devcontainer.json.    
 For an image built locally, you should put the IMAGE_VERSION=local-build. 
 For an image built from a pull request, you should put the IMAGE_VERSION=<tag of image as show in pull request job>.  
@@ -247,26 +249,28 @@ poetry run python \
 ```
 
 ## Common makefile targets
-There are a set of common Makefiles that are defined in `src/base/.devcontainer/makefiles` and are included from `common.mk` that are installed to all built container images.
+There are a set of common Makefiles that are defined in `src/base/.devcontainer/makefiles` and are included from `common.mk`. These are installed to all built container images.
 
 This should be added to the end of each projects Makefile to include them
 ```
 %:
 	@$(MAKE) -f /usr/local/share/eps/Mk/common.mk $@
 ```
+### Targets
+The following targets are defined. These are needed for quality checks to run. Some targets are project specific and so should be overridden in the projects Makefile.
 
 Build targets (`build.mk`)
-- `install` - placeholder target (currently not implemented)
-- `install-node` - placeholder target (currently not implemented)
-- `docker-build` - placeholder target (currently not implemented)
-- `compile` - placeholder target (currently not implemented)
+- `install` - placeholder target - should be overridden locally
+- `install-node` - placeholder target - should be overridden locally
+- `docker-build` - placeholder target - should be overridden locally
+- `compile` - placeholder target - should be overridden locally
 
 Check targets (`check.mk`)
-- `lint` - placeholder target (currently not implemented)
-- `test` - placeholder target (currently not implemented)
+- `lint` - placeholder target - should be overridden locally
+- `test` - placeholder target - should be overridden locally
 - `shellcheck` - runs shellcheck on `scripts/*.sh` and `.github/scripts/*.sh` when files exist
 - `cfn-lint` - runs `cfn-lint` against `cloudformation/**/*.yml|yaml` and `SAMtemplates/**/*.yml|yaml`
-- `cdk-synth` - placeholder target (currently not implemented)
+- `cdk-synth` - placeholder target - should be overridden locally
 - `cfn-guard-sam-templates` - validates SAM templates against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
 - `cfn-guard-cloudformation` - validates `cloudformation` templates against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
 - `cfn-guard-cdk` - validates `cdk.out` against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
