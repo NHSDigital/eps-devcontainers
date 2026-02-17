@@ -26,6 +26,7 @@ build-image: guard-CONTAINER_NAME guard-BASE_VERSION_TAG guard-BASE_FOLDER guard
 		--workspace-folder ./src/$${BASE_FOLDER}/$${CONTAINER_NAME} \
 		$(NO_CACHE_FLAG) \
 		--push false \
+		--output type=image,name="${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}",push=false,compression=zstd \
 		--cache-from "${CONTAINER_PREFIX}$${CONTAINER_NAME}:latest" \
 		--image-name "${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}"
 
