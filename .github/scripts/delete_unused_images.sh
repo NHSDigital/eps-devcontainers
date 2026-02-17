@@ -44,13 +44,17 @@ delete_pr_images() {
 	fi
 
 	while IFS= read -r tag; do
-		if [[ "${tag}" =~ ^pr-[0-9]+- ]]; then
-			local pull_request
+		local pull_request
+		if [[ "${tag}" =~ ^pr-([0-9]+)- ]]; then
+			pull_request=${BASH_REMATCH[1]}
+		elif [[ "${tag}" =~ ^githubactions-pr-([0-9]+)$ ]]; then
+			pull_request=${BASH_REMATCH[1]}
+		else
+			continue
+		fi
+
 			local pr_json
 			local pr_state
-
-			pull_request=${tag#pr-}
-			pull_request=${pull_request%%-*}
 
 			if ! pr_json=$(gh api \
 				-H "Accept: application/vnd.github+json" \
@@ -75,7 +79,6 @@ delete_pr_images() {
 						 	"/orgs/nhsdigital/packages/container/${package_name}/versions/${version_id}"
 					fi
 				done
-		fi
 	done <<<"${tags}"
 }
 
