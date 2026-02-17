@@ -274,6 +274,25 @@ poetry run python \
   --output src/projects/fhir_facade_api/.trivyignore.new.yaml 
 ```
 
+## Cleaning up unused container images
+
+There is a script to delete unused container images. This runs on every merge to main, and deletes pull request images, and on a weekly schedule which deletes images created by ci.   
+You can run it manually using the following. Using the `dry-run` flag just shows what would be deleted
+
+```
+make github-login
+bash .github/scripts/delete_unused_images.sh --delete-pr --dry-run
+bash .github/scripts/delete_unused_images.sh --delete-ci --dry-run
+bash .github/scripts/delete_unused_images.sh --delete-pr --delete-ci
+```
+
+Flags:
+- `--dry-run` (`-n`) shows what would be deleted without deleting anything.
+- `--delete-pr` deletes images tagged with `pr-...` or `githubactions-pr-...` only when the PR is closed.
+- `--delete-ci` deletes images tagged with `ci-<8 hex sha>...` or `githubactions-ci-<8 hex sha>...`.
+
+If neither `--delete-pr` nor `--delete-ci` is set, the script defaults to `--delete-pr`.
+
 ## Common makefile targets
 There are a set of common Makefiles that are defined in `src/base/.devcontainer/Mk` and are included from `common.mk`. These are installed to /usr/local/share/eps/Mk on the base image so are available for all containers.
 

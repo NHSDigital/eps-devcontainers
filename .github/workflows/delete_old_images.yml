@@ -26,6 +26,13 @@ jobs:
 
       - name: delete unused images
         shell: bash
-        run: .github/scripts/delete_unused_images.sh
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            .github/scripts/delete_unused_images.sh --delete-pr
+          elif [[ "${{ github.event_name }}" == "schedule" ]]; then
+            .github/scripts/delete_unused_images.sh --delete-ci
+          else
+            .github/scripts/delete_unused_images.sh
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
