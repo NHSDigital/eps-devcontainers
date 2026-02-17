@@ -247,12 +247,12 @@ poetry run python \
 ```
 
 ## Common makefile targets
-The common makefiles are defined in `src/base/.devcontainer/makefiles` and are included from `common.mk`.
+There are a set of common Makefiles that are defined in `src/base/.devcontainer/makefiles` and are included from `common.mk` that are installed to all built container images.
 
-You should add this to the end of project Makefile to include them
+This should be added to the end of each projects Makefile to include them
 ```
 %:
-	@$(MAKE) -f /usr/local/share/eps/makefiles/common.mk $@
+	@$(MAKE) -f /usr/local/share/eps/Mk/common.mk $@
 ```
 
 Build targets (`build.mk`)
