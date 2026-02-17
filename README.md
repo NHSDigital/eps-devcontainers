@@ -222,6 +222,12 @@ CONTAINER_NAME=fhir_facade_api \
   IMAGE_TAG=local-build \
   make shell-image
 ``` 
+github actions image
+```
+CONTAINER_NAME=base \
+  IMAGE_TAG=githubactions-local-build \
+  make shell-image
+```
 
 ## Using local or pull request images in visual studio code
 You can use local or pull request images by changing IMAGE_VERSION in devcontainer.json.    
