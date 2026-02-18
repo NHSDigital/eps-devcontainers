@@ -72,6 +72,7 @@ scan-image-json: guard-CONTAINER_NAME guard-BASE_FOLDER guard-IMAGE_TAG
 
 shell-image: guard-CONTAINER_NAME guard-IMAGE_TAG
 	docker run -it \
+	--rm \
 	"${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}"  \
 	bash
 
