@@ -6,21 +6,6 @@ name: pull_request
 env:
   BRANCH_NAME: '${{ github.event.pull_request.head.ref }}'
 jobs:
-  get_config_values:
-    runs-on: ubuntu-22.04
-    outputs:
-      devcontainer_image_name: ${{ steps.load-config.outputs.DEVCONTAINER_IMAGE_NAME }}
-      devcontainer_image_version: ${{ steps.load-config.outputs.DEVCONTAINER_IMAGE_VERSION }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-      - name: Load config value
-        id: load-config
-        run: |
-          DEVCONTAINER_IMAGE_NAME=$(jq -r '.build.args.IMAGE_NAME' .devcontainer/devcontainer.json)
-          DEVCONTAINER_IMAGE_VERSION=$(jq -r '.build.args.IMAGE_VERSION' .devcontainer/devcontainer.json)
-          echo "DEVCONTAINER_IMAGE_NAME=$DEVCONTAINER_IMAGE_NAME" >> "$GITHUB_OUTPUT"
-          echo "DEVCONTAINER_IMAGE_VERSION=$DEVCONTAINER_IMAGE_VERSION" >> "$GITHUB_OUTPUT"
   dependabot-auto-approve-and-merge:
     needs: quality_checks
     uses: >-
@@ -103,7 +88,6 @@ jobs:
     needs:
       - get_issue_number
       - get_commit_id
-      - get_config_values
     uses: ./.github/workflows/build_all_images.yml 
     with: 
       docker_tag: 'pr-${{ needs.get_issue_number.outputs.issue_number }}-${{ needs.get_commit_id.outputs.sha_short }}'
