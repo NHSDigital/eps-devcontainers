@@ -40,7 +40,8 @@ jobs:
       tag_format: ${{ needs.get_asdf_version.outputs.tag_format }}
     secrets: inherit
   build_all_images:
-    needs: tag_release
+    needs: 
+      - tag_release
     uses: ./.github/workflows/build_all_images.yml 
     with: 
       docker_tag: 'ci-${{ needs.tag_release.outputs.version_tag }}'

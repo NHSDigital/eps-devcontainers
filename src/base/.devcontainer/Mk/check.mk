@@ -16,8 +16,12 @@ shellcheck:
 	fi
 
 cfn-lint:
-	cfn-lint -I "cloudformation/**/*.y*ml" 2>&1 | awk '/Run scan/ { print } /^[EW][0-9]/ { print; getline; print }'
-	cfn-lint -I "SAMtemplates/**/*.y*ml" 2>&1 | awk '/Run scan/ { print } /^[EW][0-9]/ { print; getline; print }'
+	@if find cloudformation -type f \( -name "*.yaml" -o -name "*.yml" \) 2>/dev/null | grep -q .; then \
+		cfn-lint -I "cloudformation/**/*.y*ml" 2>&1 | awk '/Run scan/ { print } /^[EW][0-9]/ { print; getline; print; found=1 } END { exit found }'; \
+	fi
+	@if find SAMtemplates -type f \( -name "*.yaml" -o -name "*.yml" \) 2>/dev/null | grep -q .; then \
+		cfn-lint -I "SAMtemplates/**/*.y*ml" 2>&1 | awk '/Run scan/ { print } /^[EW][0-9]/ { print; getline; print; found=1 } END { exit found }'; \
+	fi
 
 cdk-synth:
 	echo "Not implemented"

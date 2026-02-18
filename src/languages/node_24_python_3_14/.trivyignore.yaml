@@ -1,14 +1,4 @@
 vulnerabilities:
-  - id: CVE-2026-25547
-    statement: "brace-expansion: brace-expansion: Denial of Service via unbounded brace range expansion"
-    purls:
-      - "pkg:npm/%40isaacs/brace-expansion@5.0.0"
-    expired_at: 2026-08-12
-  - id: CVE-2026-24842
-    statement: "node-tar: tar: node-tar: Arbitrary file creation via path traversal bypass in hardlink security check"
-    purls:
-      - "pkg:npm/tar@7.5.4"
-    expired_at: 2026-08-12
   - id: CVE-2026-23949
     statement: "jaraco.context: jaraco.context: Path traversal via malicious tar archives"
     purls:
@@ -19,24 +9,3 @@ vulnerabilities:
     purls:
       - "pkg:pypi/wheel@0.45.1"
     expired_at: 2026-08-12
-  - id: CVE-2025-64756
-    statement: "glob: glob: Command Injection Vulnerability via Malicious Filenames"
-    purls:
-      - "pkg:npm/glob@10.4.5"
-      - "pkg:npm/glob@11.0.3"
-    expired_at: 2026-08-13
-  - id: CVE-2026-23745
-    statement: "node-tar: tar: node-tar: Arbitrary file overwrite and symlink poisoning via unsanitized linkpaths in archives"
-    purls:
-      - "pkg:npm/tar@7.5.1"
-    expired_at: 2026-08-13
-  - id: CVE-2026-23950
-    statement: "node-tar: tar: node-tar: Arbitrary file overwrite via Unicode path collision race condition"
-    purls:
-      - "pkg:npm/tar@7.5.1"
-    expired_at: 2026-08-13
-  - id: CVE-2026-24842
-    statement: "node-tar: tar: node-tar: Arbitrary file creation via path traversal bypass in hardlink security check"
-    purls:
-      - "pkg:npm/tar@7.5.1"
-    expired_at: 2026-08-13

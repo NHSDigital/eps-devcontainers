@@ -17,6 +17,9 @@ name: Build and push docker image
       NO_CACHE:
         required: true
         type: boolean
+      EXTRA_COMMON:
+        required: false
+        type: string
 
 jobs:
   build_and_push_image:
@@ -27,6 +30,7 @@ jobs:
       attestations: write
       id-token: write
     runs-on: '${{ matrix.runner }}'
+
     strategy:
       fail-fast: false
       matrix:
@@ -59,6 +63,10 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
+      - name: setup trivy
+        uses: aquasecurity/setup-trivy@3fb12ec12f41e471780db15c232d5dd185dcb514
+        with:
+          version: v0.69.1
       - name: setup node
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
@@ -72,17 +80,6 @@ jobs:
         run: |
           echo "Building image..."
           make build-image
-
-          echo "Creating combined trivy ignore file"
-          # create combined trivy ignore file for use in trivy scan, combining common and specific ignore files if they exist
-          combined="src/${BASE_FOLDER}/${CONTAINER_NAME}/.trivyignore_combined.yaml"
-          common="src/common/.trivyignore.yaml"
-          specific="src/${BASE_FOLDER}/${CONTAINER_NAME}/.trivyignore.yaml"
-          echo "vulnerabilities:" > "$combined"
-          if [ -f "$common" ]; then sed -n '2,$p' "$common" >> "$combined"; fi
-          if [ -f "$specific" ]; then sed -n '2,$p' "$specific" >> "$combined"; fi
-          echo "Combined trivy ignore file created at $combined"
-
         env:
           ARCHITECTURE: '${{ matrix.arch }}'
           CONTAINER_NAME: '${{ inputs.container_name }}'
@@ -92,41 +89,34 @@ jobs:
           BASE_FOLDER: "${{ inputs.base_folder }}"
           NO_CACHE: '${{ inputs.NO_CACHE }}'
       - name: Check docker vulnerabilities - json output
-        uses: aquasecurity/trivy-action@c1824fd6edce30d7ab345a9989de00bbd46ef284
-        with:
-          scan-type: "image"
-          image-ref:  "ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}:${{ inputs.docker_tag }}-${{ matrix.arch }}"
-          severity: "CRITICAL,HIGH"
-          scanners: "vuln"
-          vuln-type: "os,library"
-          format: "json"
-          output: "scan_results_docker.json"
-          exit-code: "0"
-          trivy-config: src/${{ inputs.base_folder }}/${{ inputs.container_name }}/trivy.yaml
+        run: |
+          make scan-image-json
+        env:
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          BASE_FOLDER: "${{ inputs.base_folder }}"
+          IMAGE_TAG: "${{ inputs.docker_tag }}-${{ matrix.arch }}"
+          EXIT_CODE: 0
+          EXTRA_COMMON: "${{ inputs.extra_common }}"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         name: Upload scan results
         with:
           name: "scan_results_docker_${{ inputs.container_name }}_${{ matrix.arch }}.json"
-          path: scan_results_docker.json
+          path: .out/scan_results_docker.json
       - name: Check docker vulnerabilities - table output
-        uses: aquasecurity/trivy-action@c1824fd6edce30d7ab345a9989de00bbd46ef284
-        with:
-          scan-type: "image"
-          image-ref:  "ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}:${{ inputs.docker_tag }}-${{ matrix.arch }}"
-          severity: "CRITICAL,HIGH"
-          scanners: "vuln"
-          vuln-type: "os,library"
-          format: "table"
-          output: "scan_results_docker.txt"
-          exit-code: "1"
-          trivy-config: src/${{ inputs.base_folder }}/${{ inputs.container_name }}/trivy.yaml
-
+        run: |
+          make scan-image
+        env:
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          BASE_FOLDER: "${{ inputs.base_folder }}"
+          IMAGE_TAG: "${{ inputs.docker_tag }}-${{ matrix.arch }}"
+          EXIT_CODE: "1"
+          EXTRA_COMMON: "${{ inputs.extra_common }}"
       - name: Show docker vulnerability output
         if: always()
         run: |
           echo "Scan output for ghcr.io/nhsdigital/eps-devcontainers/base:${DOCKER_TAG}-${ARCHITECTURE}"
-          if [ -f scan_results_docker.txt ]; then
-            cat scan_results_docker.txt
+          if [ -f .out/scan_results_docker.txt ]; then
+            cat .out/scan_results_docker.txt
           fi
         env:
           ARCHITECTURE: '${{ matrix.arch }}'

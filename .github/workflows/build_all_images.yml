@@ -17,17 +17,22 @@ jobs:
   discover_folders:
     runs-on: ubuntu-latest
     outputs:
-      language_folders: ${{ steps.find-folders.outputs.languages }}
+      base_node_folders: ${{ steps.find-folders.outputs.base_node }}
+      node_24_language_folders: ${{ steps.find-folders.outputs.node_24_languages }}
       project_folders: ${{ steps.find-folders.outputs.projects }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - id: find-folders
         run: |
-          language_folders=$(find src/languages -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | jq -R -s -c 'split("\n")[:-1]')
+          base_node_folders=$(find src/base_node -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | jq -R -s -c 'split("\n")[:-1]')
+          node_24_language_folders=$(find src/languages -mindepth 1 -maxdepth 1 -type d -name 'node_24*' -printf '%f\n' | jq -R -s -c 'split("\n")[:-1]')
           project_folders=$(find src/projects -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | jq -R -s -c 'split("\n")[:-1]')
-          echo "languages=$language_folders" >> "$GITHUB_OUTPUT"
-          echo "projects=$project_folders" >> "$GITHUB_OUTPUT"
+          {
+            echo "base_node=$base_node_folders"
+            echo "node_24_languages=$node_24_language_folders"
+            echo "projects=$project_folders"
+          } >> "$GITHUB_OUTPUT"
   package_base_docker_image:
     uses: ./.github/workflows/build_multi_arch_image.yml
     with:
@@ -36,14 +41,31 @@ jobs:
       container_name: base
       base_folder: "."
       NO_CACHE: ${{ inputs.NO_CACHE }}
-  package_language_docker_images:
+  package_base_node_images:
     needs:
       - package_base_docker_image
       - discover_folders
     strategy:
       fail-fast: false
       matrix:
-            container_name: ${{ fromJson(needs.discover_folders.outputs.language_folders) }}
+            container_name: ${{ fromJson(needs.discover_folders.outputs.base_node_folders) }}
+    uses: ./.github/workflows/build_multi_arch_image.yml
+    with:
+      tag_latest: ${{ inputs.tag_latest }}
+      docker_tag: ${{ inputs.docker_tag }}
+      container_name: ${{ matrix.container_name }}
+      base_folder: "base_node"
+      NO_CACHE: ${{ inputs.NO_CACHE }}
+      EXTRA_COMMON: "common_node_24"
+  package_node_24_language_docker_images:
+    needs:
+      - package_base_docker_image
+      - package_base_node_images
+      - discover_folders
+    strategy:
+      fail-fast: false
+      matrix:
+            container_name: ${{ fromJson(needs.discover_folders.outputs.node_24_language_folders) }}
     uses: ./.github/workflows/build_multi_arch_image.yml
     with:
       tag_latest: ${{ inputs.tag_latest }}
@@ -51,10 +73,10 @@ jobs:
       container_name: ${{ matrix.container_name }}
       base_folder: "languages"
       NO_CACHE: ${{ inputs.NO_CACHE }}
+      EXTRA_COMMON: "common_node_24"
   package_project_docker_images:
     needs:
-      - package_language_docker_images
-
+      - package_node_24_language_docker_images
       - discover_folders
     strategy:
       fail-fast: false
@@ -67,3 +89,4 @@ jobs:
       container_name: ${{ matrix.container_name }}
       base_folder: "projects"
       NO_CACHE: ${{ inputs.NO_CACHE }}
+      EXTRA_COMMON: "common_node_24"
