@@ -89,3 +89,4 @@ jobs:
       container_name: ${{ matrix.container_name }}
       base_folder: "projects"
       NO_CACHE: ${{ inputs.NO_CACHE }}
+      EXTRA_COMMON: "common_node_24"
