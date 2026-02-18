@@ -154,7 +154,6 @@ jobs:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_arch_digest.outputs.digest }}
           push-to-registry: true
-          create-storage-record: false
       - name: Summarise attested image
         run: |
           echo "## ATTESTED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}@${DIGEST}" >> "$GITHUB_STEP_SUMMARY"
@@ -179,7 +178,6 @@ jobs:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_githubactions_arch_digest.outputs.digest }}
           push-to-registry: true
-          create-storage-record: false
       - name: Summarise attested github actions image
         run: |
           echo "## ATTESTED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-${DOCKER_TAG}-${ARCHITECTURE}@${DIGEST}" >> "$GITHUB_STEP_SUMMARY"
@@ -221,7 +219,6 @@ jobs:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_githubactions_latest_arch_digest.outputs.digest }}
           push-to-registry: true
-          create-storage-record: false
       - name: Summarise attested github actions latest image
         if: ${{ inputs.tag_latest }}
         run: |
@@ -247,7 +244,6 @@ jobs:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_latest_arch_digest.outputs.digest }}
           push-to-registry: true
-          create-storage-record: false
       - name: Summarise attested latest image
         if: ${{ inputs.tag_latest }}
         run: |
@@ -343,7 +339,6 @@ jobs:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_combined_digest.outputs.digest }}
           push-to-registry: true
-          create-storage-record: false
       - name: Summarise attested combined image
         run: |
           echo "## ATTESTED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}@${DIGEST}" >> "$GITHUB_STEP_SUMMARY"
@@ -368,7 +363,6 @@ jobs:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_githubactions_combined_digest.outputs.digest }}
           push-to-registry: true
-          create-storage-record: false
       - name: Summarise attested combined github actions image
         run: |
           echo "## ATTESTED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-${DOCKER_TAG}@${DIGEST}" >> "$GITHUB_STEP_SUMMARY"
@@ -394,7 +388,6 @@ jobs:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_githubactions_latest_digest.outputs.digest }}
           push-to-registry: true
-          create-storage-record: false
       - name: Summarise attested latest github actions image
         if: ${{ inputs.tag_latest }}
         run: |
@@ -420,7 +413,6 @@ jobs:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_latest_digest.outputs.digest }}
           push-to-registry: true
-          create-storage-record: false
       - name: Summarise attested latest image
         if: ${{ inputs.tag_latest }}
         run: |
