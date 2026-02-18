@@ -127,7 +127,7 @@ jobs:
 ```
 It is important that 
 - the image specified uses the tag starting githubactions-
-- there is `options: --user 1001:1001` below image
+- there is `options: --user 1001:1001 --group-add 128` below image to ensure it uses the correct user id and is added to the docker group
 - the default shell is set to be bash
 - the first step copies .tool-versions from /home/vscode to $HOME/.tool-versions
 
