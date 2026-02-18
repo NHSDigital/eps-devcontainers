@@ -97,3 +97,8 @@ github-login:
 
 lint-githubaction-scripts:
 	shellcheck .github/scripts/*.sh
+
+clean:
+	rm -rf .out
+	find . -type f -name '.trivyignore_combined.yaml' -delete
+	
