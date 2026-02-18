@@ -229,8 +229,9 @@ CONTAINER_NAME=base \
 Base node 24 image
 ```
 CONTAINER_NAME=node_24 \
-  BASE_FOLDER=languages \
+  BASE_FOLDER=base_node \
   IMAGE_TAG=local-build \
+  EXTRA_COMMON=common_node_24 \
   make scan-image
 ```
 Language images
