@@ -44,6 +44,7 @@ scan-image: guard-CONTAINER_NAME guard-BASE_FOLDER
 	@combined="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore_combined.yaml"; \
 	common="src/common/.trivyignore.yaml"; \
 	specific="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore.yaml"; \
+	exit_code="$${EXIT_CODE:-1}"; \
 	echo "vulnerabilities:" > "$$combined"; \
 	if [ -f "$$common" ]; then sed -n '2,$$p' "$$common" >> "$$combined"; fi; \
 	if [ -f "$$specific" ]; then sed -n '2,$$p' "$$specific" >> "$$combined"; fi
@@ -51,13 +52,15 @@ scan-image: guard-CONTAINER_NAME guard-BASE_FOLDER
 		--severity HIGH,CRITICAL \
 		--config src/${BASE_FOLDER}/${CONTAINER_NAME}/trivy.yaml \
 		--scanners vuln \
-		--exit-code 1 \
-		--format table "${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}" 
+		--exit-code "$$exit_code" \
+		--format table \
+		--output .out/scan_results_docker.txt "${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}" 
 
 scan-image-json: guard-CONTAINER_NAME guard-BASE_FOLDER guard-IMAGE_TAG
 	@combined="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore_combined.yaml"; \
 	common="src/common/.trivyignore.yaml"; \
 	specific="src/$${BASE_FOLDER}/$${CONTAINER_NAME}/.trivyignore.yaml"; \
+	exit_code="$${EXIT_CODE:-1}"; \
 	echo "vulnerabilities:" > "$$combined"; \
 	if [ -f "$$common" ]; then sed -n '2,$$p' "$$common" >> "$$combined"; fi; \
 	if [ -f "$$specific" ]; then sed -n '2,$$p' "$$specific" >> "$$combined"; fi
@@ -66,7 +69,7 @@ scan-image-json: guard-CONTAINER_NAME guard-BASE_FOLDER guard-IMAGE_TAG
 		--severity HIGH,CRITICAL \
 		--config src/${BASE_FOLDER}/${CONTAINER_NAME}/trivy.yaml \
 		--scanners vuln \
-		--exit-code 1 \
+		--exit-code "$$exit_code" \
 		--format json \
 		--output .out/scan_results_docker.json "${CONTAINER_PREFIX}$${CONTAINER_NAME}:$${IMAGE_TAG}" 
 
