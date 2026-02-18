@@ -102,9 +102,9 @@ jobs:
         with:
           name: "scan_results_docker_${{ inputs.container_name }}_${{ matrix.arch }}.json"
           path: .out/scan_results_docker.json
-      - name: Check docker vulnerabilities - json output
+      - name: Check docker vulnerabilities - table output
         run: |
-          make scan-image-json
+          make scan-image
         env:
           CONTAINER_NAME: '${{ inputs.container_name }}'
           BASE_FOLDER: "${{ inputs.base_folder }}"
