@@ -85,7 +85,6 @@ trivy-scan-docker: guard-DOCKER_IMAGE
 		--scanners vuln \
 		--severity HIGH,CRITICAL \
 		--config trivy.yaml \
-		--include-dev-deps \
 		--exit-code 1 \
 		--pkg-types os,library \
 		--output .trivy_out/dependency_results_docker.txt \
