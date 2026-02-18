@@ -11,6 +11,9 @@ name: build_all_images
       NO_CACHE:
         required: true
         type: boolean
+      runtime_docker_image:
+        type: string
+        required: true
 env:
   BRANCH_NAME: '${{ github.event.pull_request.head.ref }}'
 jobs:
@@ -41,6 +44,7 @@ jobs:
       container_name: base
       base_folder: "."
       NO_CACHE: ${{ inputs.NO_CACHE }}
+      runtime_docker_image: ${{ inputs.runtime_docker_image }}
   package_base_node_images:
     needs:
       - package_base_docker_image
@@ -56,6 +60,7 @@ jobs:
       container_name: ${{ matrix.container_name }}
       base_folder: "base_node"
       NO_CACHE: ${{ inputs.NO_CACHE }}
+      runtime_docker_image: ${{ inputs.runtime_docker_image }}
   package_node_24_language_docker_images:
     needs:
       - package_base_docker_image
@@ -73,6 +78,7 @@ jobs:
       base_folder: "languages"
       NO_CACHE: ${{ inputs.NO_CACHE }}
       EXTRA_COMMON: "common_node_24"
+      runtime_docker_image: ${{ inputs.runtime_docker_image }}
   package_project_docker_images:
     needs:
       - package_node_24_language_docker_images
@@ -88,3 +94,4 @@ jobs:
       container_name: ${{ matrix.container_name }}
       base_folder: "projects"
       NO_CACHE: ${{ inputs.NO_CACHE }}
+      runtime_docker_image: ${{ inputs.runtime_docker_image }}

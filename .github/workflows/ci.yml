@@ -4,6 +4,21 @@ on:
     branches: [main]
 
 jobs:
+  get_config_values:
+    runs-on: ubuntu-22.04
+    outputs:
+      devcontainer_image_name: ${{ steps.load-config.outputs.DEVCONTAINER_IMAGE_NAME }}
+      devcontainer_image_version: ${{ steps.load-config.outputs.DEVCONTAINER_IMAGE_VERSION }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - name: Load config value
+        id: load-config
+        run: |
+          DEVCONTAINER_IMAGE_NAME=$(jq -r '.build.args.IMAGE_NAME' .devcontainer/devcontainer.json)
+          DEVCONTAINER_IMAGE_VERSION=$(jq -r '.build.args.IMAGE_VERSION' .devcontainer/devcontainer.json)
+          echo "DEVCONTAINER_IMAGE_NAME=$DEVCONTAINER_IMAGE_NAME" >> "$GITHUB_OUTPUT"
+          echo "DEVCONTAINER_IMAGE_VERSION=$DEVCONTAINER_IMAGE_VERSION" >> "$GITHUB_OUTPUT"
   get_asdf_version:
     runs-on: ubuntu-22.04
     outputs:
@@ -40,9 +55,12 @@ jobs:
       tag_format: ${{ needs.get_asdf_version.outputs.tag_format }}
     secrets: inherit
   build_all_images:
-    needs: tag_release
+    needs: 
+      - tag_release
+      - get_config_values
     uses: ./.github/workflows/build_all_images.yml 
     with: 
       docker_tag: 'ci-${{ needs.tag_release.outputs.version_tag }}'
       tag_latest: false
       NO_CACHE: false
+      runtime_docker_image: "${{ needs.get_config_values.outputs.devcontainer_image_name }}:githubactions-${{ needs.get_config_values.outputs.devcontainer_image_version }}"
