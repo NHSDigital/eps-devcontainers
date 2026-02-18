@@ -109,4 +109,3 @@ jobs:
       docker_tag: 'pr-${{ needs.get_issue_number.outputs.issue_number }}-${{ needs.get_commit_id.outputs.sha_short }}'
       tag_latest: false
       NO_CACHE: false
-      runtime_docker_image: "${{ needs.get_config_values.outputs.devcontainer_image_name }}:githubactions-${{ needs.get_config_values.outputs.devcontainer_image_version }}"

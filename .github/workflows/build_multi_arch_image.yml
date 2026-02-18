@@ -20,9 +20,6 @@ name: Build and push docker image
       EXTRA_COMMON:
         required: false
         type: string
-      runtime_docker_image:
-        type: string
-        required: true
 
 jobs:
   build_and_push_image:
@@ -33,12 +30,6 @@ jobs:
       attestations: write
       id-token: write
     runs-on: '${{ matrix.runner }}'
-    container:
-      image: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.runtime_docker_image }}
-      options: --user 1001:1001 --group-add 128
-    defaults:
-      run:
-        shell: bash
 
     strategy:
       fail-fast: false
@@ -49,9 +40,6 @@ jobs:
           - arch: arm64
             runner: ubuntu-22.04-arm
     steps:
-      - name: copy .tool-versions
-        run: |
-          cp /home/vscode/.tool-versions "$HOME/.tool-versions"
       - name: Free Disk Space for Docker
         uses: endersonmenezes/free-disk-space@e6ed9b02e683a3b55ed0252f1ee469ce3b39a885
         with:
