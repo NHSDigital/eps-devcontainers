@@ -3,6 +3,7 @@
 DRY_RUN=false
 DELETE_PR=false
 DELETE_CI=false
+DELETE_UNTAGGED=false
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
@@ -18,13 +19,17 @@ while [[ $# -gt 0 ]]; do
 			DELETE_CI=true
 			shift
 			;;
+		--delete-untagged)
+			DELETE_UNTAGGED=true
+			shift
+			;;
 		--help|-h)
-			echo "Usage: $0 [--dry-run] [--delete-pr] [--delete-ci]"
+			echo "Usage: $0 [--dry-run] [--delete-pr] [--delete-ci] [--delete-untagged]"
 			exit 0
 			;;
 		*)
 			echo "Unknown option: $1" >&2
-			echo "Usage: $0 [--dry-run] [--delete-pr] [--delete-ci]" >&2
+			echo "Usage: $0 [--dry-run] [--delete-pr] [--delete-ci] [--delete-untagged]" >&2
 			exit 1
 			;;
 	esac
@@ -166,7 +171,37 @@ delete_ci_images() {
 	done <<<"${tags}"
 }
 
+delete_untagged_images() {
+	local container_name=$1
+	local package_name
+	local versions_json
 
+	if [[ -z "${container_name}" ]]; then
+		echo "Container name is required" >&2
+		return 1
+	fi
+
+	package_name=$(get_container_package_name "${container_name}")
+	versions_json=$(get_container_versions_json "${container_name}")
+
+	jq -r '.[] | select(((.metadata.container.tags // []) | length) == 0) | .id' \
+		<<<"${versions_json}" \
+		| while IFS= read -r version_id; do
+			if [[ -n "${version_id}" ]]; then
+				if [[ "${DRY_RUN}" == "true" ]]; then
+					echo "[DRY RUN] Would delete untagged image version ID ${version_id} from container ${container_name}."
+				else
+					echo "Deleting untagged image version ID ${version_id} from container ${container_name}..."
+					gh api \
+					 	-H "Accept: application/vnd.github+json" \
+					 	-X DELETE \
+					 	"/orgs/nhsdigital/packages/container/${package_name}/versions/${version_id}"
+				fi
+			fi
+		done
+}
+
+base_node_folders=$(find src/base_node -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | jq -R -s -c 'split("\n")[:-1]')
 language_folders=$(find src/languages -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | jq -R -s -c 'split("\n")[:-1]')
 project_folders=$(find src/projects -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | jq -R -s -c 'split("\n")[:-1]')
 
@@ -177,6 +212,21 @@ for container_name in $(jq -r '.[]' <<<"${project_folders}"); do
 	if [[ "${DELETE_CI}" == "true" ]]; then
 		delete_ci_images "${container_name}"
 	fi
+	if [[ "${DELETE_UNTAGGED}" == "true" ]]; then
+		delete_untagged_images "${container_name}"
+	fi
+done
+
+for container_name in $(jq -r '.[]' <<<"${base_node_folders}"); do
+	if [[ "${DELETE_PR}" == "true" ]]; then
+		delete_pr_images "${container_name}"
+	fi
+	if [[ "${DELETE_CI}" == "true" ]]; then
+		delete_ci_images "${container_name}"
+	fi
+	if [[ "${DELETE_UNTAGGED}" == "true" ]]; then
+		delete_untagged_images "${container_name}"
+	fi
 done
 
 for container_name in $(jq -r '.[]' <<<"${language_folders}"); do
@@ -186,6 +236,9 @@ for container_name in $(jq -r '.[]' <<<"${language_folders}"); do
 	if [[ "${DELETE_CI}" == "true" ]]; then
 		delete_ci_images "${container_name}"
 	fi
+	if [[ "${DELETE_UNTAGGED}" == "true" ]]; then
+		delete_untagged_images "${container_name}"
+	fi
 done
 
 if [[ "${DELETE_PR}" == "true" ]]; then
@@ -193,4 +246,7 @@ if [[ "${DELETE_PR}" == "true" ]]; then
 fi
 if [[ "${DELETE_CI}" == "true" ]]; then
 	delete_ci_images "base"
+fi
+if [[ "${DELETE_UNTAGGED}" == "true" ]]; then
+	delete_untagged_images "base"
 fi

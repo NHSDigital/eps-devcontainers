@@ -4,7 +4,7 @@ name: "Delete old images"
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 1,13 * * *"
+    - cron: "0 1 * * 6"
   push:
     branches: [main]
 
@@ -30,7 +30,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             .github/scripts/delete_unused_images.sh --delete-pr
           elif [[ "${{ github.event_name }}" == "schedule" ]]; then
-            .github/scripts/delete_unused_images.sh --delete-ci
+            .github/scripts/delete_unused_images.sh --delete-ci --delete-untagged
           else
             .github/scripts/delete_unused_images.sh
           fi
