@@ -230,9 +230,10 @@ CONTAINER_NAME=node_24 \
 ```
 Language images
 ```
-CONTAINER_NAME=node_24_python_3_12 \
+CONTAINER_NAME=node_24_python_3_14 \
   BASE_FOLDER=languages \
   IMAGE_TAG=local-build \
+  EXTRA_COMMON=common_node_24 \
   make scan-image
 ``` 
 Project images

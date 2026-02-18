@@ -17,6 +17,9 @@ name: Build and push docker image
       NO_CACHE:
         required: true
         type: boolean
+      EXTRA_COMMON:
+        required: false
+        type: string
 
 jobs:
   build_and_push_image:
@@ -88,6 +91,7 @@ jobs:
           BASE_FOLDER: "${{ inputs.base_folder }}"
           IMAGE_TAG: "${{ inputs.docker_tag }}-${{ matrix.arch }}"
           EXIT_CODE: 0
+          EXTRA_COMMON: "${{ inputs.extra_common }}"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         name: Upload scan results
         with:
@@ -101,7 +105,7 @@ jobs:
           BASE_FOLDER: "${{ inputs.base_folder }}"
           IMAGE_TAG: "${{ inputs.docker_tag }}-${{ matrix.arch }}"
           EXIT_CODE: "1"
-
+          EXTRA_COMMON: "${{ inputs.extra_common }}"
       - name: Show docker vulnerability output
         if: always()
         run: |
