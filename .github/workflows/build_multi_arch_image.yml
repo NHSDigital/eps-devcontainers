@@ -88,6 +88,7 @@ jobs:
           IMAGE_TAG: "${{ inputs.docker_tag }}-${{ matrix.arch }}"
           BASE_FOLDER: "${{ inputs.base_folder }}"
           NO_CACHE: '${{ inputs.NO_CACHE }}'
+          BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
       - name: Check docker vulnerabilities - json output
         run: |
           make scan-image-json
@@ -136,6 +137,7 @@ jobs:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'
           ARCHITECTURE: '${{ matrix.arch }}'
+          BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
       - name: Resolve image digest
         id: resolve_arch_digest
         run: |
