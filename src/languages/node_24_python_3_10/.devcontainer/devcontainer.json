@@ -4,7 +4,7 @@
     "name": "EPS Devcontainer node_24 python_3.10",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
     "build": {
-      "dockerfile": "../../../common/Dockerfile",
+      "dockerfile": "../../../common_node_24/Dockerfile",
       "args": {
         "CONTAINER_NAME": "eps_devcontainer_${localEnv:CONTAINER_NAME}",
         "MULTI_ARCH_TAG": "${localEnv:MULTI_ARCH_TAG}",
