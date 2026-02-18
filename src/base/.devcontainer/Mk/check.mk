@@ -32,7 +32,7 @@ cfn-guard-sam-templates:
 				SAM_OUTPUT=$$(sam validate -t "$$file" --region eu-west-2 --debug 2>&1 | grep -Pazo "(?s)AWSTemplateFormatVersion.*\\n/" | tr -d "\\0"); \
 				output_file=".cfn_guard_out/$${file}_$${ruleset}.txt"; \
 				mkdir -p "$$(dirname "$$output_file")"; \
-				echo "$${SAM_OUTPUT::-1}" | ~/.guard/bin/cfn-guard validate --rules "/usr/local/share/eps/cfnguard_rulesets/output/$$ruleset.guard" --show-summary fail > "$$output_file"; \
+				echo "$${SAM_OUTPUT::-1}" | /home/vscode/.guard/bin/cfn-guard validate --rules "/usr/local/share/eps/cfnguard_rulesets/output/$$ruleset.guard" --show-summary fail > "$$output_file"; \
 			done < <(find ./SAMtemplates -type f \( -name "*.yaml" -o -name "*.yml" \) -print0); \
 		done\
 	'
@@ -42,7 +42,7 @@ cfn-guard-cloudformation:
 		rulesets=("ncsc" "ncsc-cafv3" "wa-Reliability-Pillar" "wa-Security-Pillar"); \
 		mkdir -p .cfn_guard_out; \
 		for ruleset in "$${rulesets[@]}"; do \
-			~/.guard/bin/cfn-guard validate \
+			/home/vscode/.guard/bin/cfn-guard validate \
 				--data cloudformation \
 				--rules "/usr/local/share/eps/cfnguard_rulesets/output/$$ruleset.guard" \
 				--show-summary fail \
@@ -55,7 +55,7 @@ cfn-guard-cdk:
 		rulesets=("ncsc" "ncsc-cafv3" "wa-Reliability-Pillar" "wa-Security-Pillar"); \
 		mkdir -p .cfn_guard_out; \
 		for ruleset in "$${rulesets[@]}"; do \
-			~/.guard/bin/cfn-guard validate \
+			/home/vscode/.guard/bin/cfn-guard validate \
 				--data cdk.out \
 				--rules "/usr/local/share/eps/cfnguard_rulesets/output/$$ruleset.guard" \
 				--show-summary fail \
@@ -68,7 +68,7 @@ cfn-guard-terraform:
 		rulesets=("ncsc" "ncsc-cafv3" "wa-Reliability-Pillar" "wa-Security-Pillar"); \
 		mkdir -p .cfn_guard_out; \
 		for ruleset in "$${rulesets[@]}"; do \
-			~/.guard/bin/cfn-guard validate \
+			/home/vscode/.guard/bin/cfn-guard validate \
 				--data terraform_plans \
 				--rules "/usr/local/share/eps/cfnguard_rulesets/output/$$ruleset.guard" \
 				--show-summary fail \
