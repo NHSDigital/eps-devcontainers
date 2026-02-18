@@ -115,7 +115,7 @@ jobs:
     runs-on: ubuntu-22.04
     container:
       image: ghcr.io/nhsdigital/eps-devcontainers/<container name>:githubactions-<tag>
-      options: --user 1001:1001
+      options: --user 1001:1001 --group-add 128
     defaults:
       run:
         shell: bash
