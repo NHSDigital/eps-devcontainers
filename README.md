@@ -303,6 +303,7 @@ You can run it manually using the following. Using the `dry-run` flag just shows
 
 ```
 make github-login
+# or gh auth login --scopes read:packages,delete:packages if you want to be able to delete images
 bash .github/scripts/delete_unused_images.sh --delete-pr --dry-run
 bash .github/scripts/delete_unused_images.sh --delete-ci --dry-run
 bash .github/scripts/delete_unused_images.sh --delete-pr --delete-ci
