@@ -5,9 +5,12 @@ EPS DEV CONTAINERS
 - [Introduction](#introduction)
 - [Using the images](#using-the-images)
   - [Project setup](#project-setup)
-  - [Getting image name and version in GitHub Actions](#getting-image-name-and-version-in-github-actions)
+  - [Getting image name and version in GitHub Actions from local config](#getting-image-name-and-version-in-github-actions)
   - [Using images in GitHub Actions](#using-images-in-github-actions)
-  - [Using local or pull request images in Visual Studio Code](#using-local-or-pull-request-images-in-visual-studio-code)
+  - [Using local or pull request images in Visual Studio Code and GitHub Actions](#using-local-or-pull-request-images-in-visual-studio-code-and-github-actions)
+- [Common Makefile targets](#common-makefile-targets)
+  - [Defined Targets](#targets)
+
 - [Project structure](#project-structure)
 - [Pull requests and merge to main process](#pull-requests-and-merge-to-main-process)
 - [Release workflow](#release-workflow)
@@ -15,10 +18,8 @@ EPS DEV CONTAINERS
   - [Building images](#building-images)
   - [Scanning images](#scanning-images)
   - [Interactive shell on image](#interactive-shell-on-image)
-  - [Generating a .trivyignore file](#generating-a-trivyignore-file)
-  - [Cleaning up unused container images](#cleaning-up-unused-container-images)
-  - [Common Makefile targets](#common-makefile-targets)
-    - [Targets](#targets)
+- [Generating a .trivyignore file](#generating-a-trivyignore-file)
+- [Cleaning up unused container images](#cleaning-up-unused-container-images)
 
 # Introduction
 This repository contains code to build VS Code devcontainers that can be used as a base image for all EPS projects.   
@@ -156,11 +157,57 @@ It is important that:
 - there is `options: --user 1001:1001 --group-add 128` below image to ensure it uses the correct user id and is added to the docker group
 - the default shell is set to be bash
 - the first step copies .tool-versions from /home/vscode to $HOME/.tool-versions
-## Using local or pull request images in Visual Studio Code
+## Using local or pull request images in Visual Studio Code and GitHub Actions
 You can use local or pull request images by changing IMAGE_VERSION in devcontainer.json.    
 For an image built locally following instructions below, you should put the IMAGE_VERSION=local-build. 
 For an image built from a pull request, you should put the IMAGE_VERSION=<tag of image as shown in pull request job>.  
 You can only use images built from a pull request for testing changes in GitHub Actions.   
+
+# Common Makefile targets
+There is a set of common Makefiles that are defined in `src/base/.devcontainer/Mk` and are included from `common.mk`. These are installed to /usr/local/share/eps/Mk on the base image, so they are available for all containers.
+
+This should be added to the end of each project's Makefile to include them
+```
+%:
+	@$(MAKE) -f /usr/local/share/eps/Mk/common.mk $@
+```
+# Targets
+The following targets are defined. These are needed for quality checks to run. Some targets are project-specific and should be overridden in the project's Makefile.
+
+Build targets (`build.mk`)
+- `install` - placeholder target - should be overridden locally
+- `install-node` - placeholder target - should be overridden locally
+- `docker-build` - placeholder target - should be overridden locally
+- `compile` - placeholder target - should be overridden locally
+
+Check targets (`check.mk`)
+- `lint` - placeholder target - should be overridden locally
+- `test` - placeholder target - should be overridden locally
+- `shellcheck` - runs shellcheck on `scripts/*.sh` and `.github/scripts/*.sh` when files exist
+- `cfn-lint` - runs `cfn-lint` against `cloudformation/**/*.yml|yaml` and `SAMtemplates/**/*.yml|yaml`
+- `cdk-synth` - placeholder target - should be overridden locally
+- `cfn-guard-sam-templates` - validates SAM templates against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
+- `cfn-guard-cloudformation` - validates `cloudformation` templates against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
+- `cfn-guard-cdk` - validates `cdk.out` against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
+- `cfn-guard-terraform` - validates `terraform_plans` against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
+- `actionlint` - runs actionlint against GitHub Actions
+- `secret-scan` - runs git-secrets (including scanning history) against the repository
+- `guard-<ENVIRONMENT_VARIABLE>` - checks if an environment variable is set and errors if it is not
+
+Credentials targets (`credentials.mk`)
+- `aws-configure` - configures an AWS SSO session
+- `aws-login` - Authorizes an SSO session with AWS so AWS CLI tools can be used. You may still need to set AWS_PROFILE before running commands
+- `github-login` - Authorizes GitHub CLI to GitHub with scope to read packages
+- `create-npmrc` - depends on `github-login`, then writes `.npmrc` with a GitHub Packages auth token and `@nhsdigital` registry
+
+Trivy targets (`trivy.mk`)
+- `trivy-license-check` - runs Trivy license scan (HIGH/CRITICAL) and writes `.trivy_out/license_scan.txt`
+- `trivy-generate-sbom` - generates CycloneDX SBOM at `.trivy_out/sbom.cdx.json`
+- `trivy-scan-python` - scans Python dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_python.txt`
+- `trivy-scan-node` - scans Node dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_node.txt`
+- `trivy-scan-go` - scans Go dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_go.txt`
+- `trivy-scan-java` - scans Java dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_java.txt`
+- `trivy-scan-docker` - scans a built image (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_docker.txt` (requires `DOCKER_IMAGE`), for example:
 
 # Project structure
 We have 5 types of dev container. These are defined under src
@@ -303,7 +350,7 @@ CONTAINER_NAME=base \
   make shell-image
 ```
 
-## Generating a .trivyignore file
+# Generating a .trivyignore file
 You can generate a .trivyignore file for known vulnerabilities by either downloading the JSON scan output generated by the build, or by generating it locally using the scanning images commands above with a make target of scan-image-json
 
 If generated locally, then the output goes into .out/scan_results_docker.json.   
@@ -322,7 +369,7 @@ poetry run python \
   --output src/projects/fhir_facade_api/.trivyignore.new.yaml 
 ```
 
-## Cleaning up unused container images
+# Cleaning up unused container images
 
 There is a script to delete unused container images. This runs on every merge to main and deletes pull request images, and on a weekly schedule it deletes images created by CI.   
 You can run it manually using the following. Using the `dry-run` flag just shows what would be deleted
@@ -341,49 +388,3 @@ Flags:
 - `--delete-ci` deletes images tagged with `ci-<8 hex sha>...` or `githubactions-ci-<8 hex sha>...`.
 
 If neither `--delete-pr` nor `--delete-ci` is set, the script defaults to `--delete-pr`.
-
-## Common Makefile targets
-There is a set of common Makefiles that are defined in `src/base/.devcontainer/Mk` and are included from `common.mk`. These are installed to /usr/local/share/eps/Mk on the base image, so they are available for all containers.
-
-This should be added to the end of each project's Makefile to include them
-```
-%:
-	@$(MAKE) -f /usr/local/share/eps/Mk/common.mk $@
-```
-### Targets
-The following targets are defined. These are needed for quality checks to run. Some targets are project-specific and should be overridden in the project's Makefile.
-
-Build targets (`build.mk`)
-- `install` - placeholder target - should be overridden locally
-- `install-node` - placeholder target - should be overridden locally
-- `docker-build` - placeholder target - should be overridden locally
-- `compile` - placeholder target - should be overridden locally
-
-Check targets (`check.mk`)
-- `lint` - placeholder target - should be overridden locally
-- `test` - placeholder target - should be overridden locally
-- `shellcheck` - runs shellcheck on `scripts/*.sh` and `.github/scripts/*.sh` when files exist
-- `cfn-lint` - runs `cfn-lint` against `cloudformation/**/*.yml|yaml` and `SAMtemplates/**/*.yml|yaml`
-- `cdk-synth` - placeholder target - should be overridden locally
-- `cfn-guard-sam-templates` - validates SAM templates against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
-- `cfn-guard-cloudformation` - validates `cloudformation` templates against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
-- `cfn-guard-cdk` - validates `cdk.out` against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
-- `cfn-guard-terraform` - validates `terraform_plans` against cfn-guard rulesets and writes outputs to `.cfn_guard_out/`
-- `actionlint` - runs actionlint against GitHub Actions
-- `secret-scan` - runs git-secrets (including scanning history) against the repository
-- `guard-<ENVIRONMENT_VARIABLE>` - checks if an environment variable is set and errors if it is not
-
-Credentials targets (`credentials.mk`)
-- `aws-configure` - configures an AWS SSO session
-- `aws-login` - Authorizes an SSO session with AWS so AWS CLI tools can be used. You may still need to set AWS_PROFILE before running commands
-- `github-login` - Authorizes GitHub CLI to GitHub with scope to read packages
-- `create-npmrc` - depends on `github-login`, then writes `.npmrc` with a GitHub Packages auth token and `@nhsdigital` registry
-
-Trivy targets (`trivy.mk`)
-- `trivy-license-check` - runs Trivy license scan (HIGH/CRITICAL) and writes `.trivy_out/license_scan.txt`
-- `trivy-generate-sbom` - generates CycloneDX SBOM at `.trivy_out/sbom.cdx.json`
-- `trivy-scan-python` - scans Python dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_python.txt`
-- `trivy-scan-node` - scans Node dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_node.txt`
-- `trivy-scan-go` - scans Go dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_go.txt`
-- `trivy-scan-java` - scans Java dependencies (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_java.txt`
-- `trivy-scan-docker` - scans a built image (HIGH/CRITICAL) and writes `.trivy_out/dependency_results_docker.txt` (requires `DOCKER_IMAGE`), for example:
