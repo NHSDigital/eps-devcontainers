@@ -88,6 +88,7 @@ jobs:
           IMAGE_TAG: "${{ inputs.docker_tag }}-${{ matrix.arch }}"
           BASE_FOLDER: "${{ inputs.base_folder }}"
           NO_CACHE: '${{ inputs.NO_CACHE }}'
+          BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
       - name: Check docker vulnerabilities - json output
         run: |
           make scan-image-json
@@ -136,6 +137,55 @@ jobs:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'
           ARCHITECTURE: '${{ matrix.arch }}'
+          BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
+      - name: Resolve image digest
+        id: resolve_arch_digest
+        run: |
+          DIGEST=$(docker buildx imagetools inspect "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}" | awk '/^Digest:/ {print $2; exit}')
+          echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "Resolved digest ${DIGEST} for ${DOCKER_TAG}-${ARCHITECTURE}"
+        env:
+          DOCKER_TAG: ${{ inputs.docker_tag }}
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          ARCHITECTURE: '${{ matrix.arch }}'
+      - name: Attest image
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a
+        with:
+          subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
+          subject-digest: ${{ steps.resolve_arch_digest.outputs.digest }}
+          push-to-registry: false
+      - name: Summarise attested image
+        run: |
+          echo "## ATTESTED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}@${DIGEST}" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          DOCKER_TAG: ${{ inputs.docker_tag }}
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          ARCHITECTURE: '${{ matrix.arch }}'
+          DIGEST: ${{ steps.resolve_arch_digest.outputs.digest }}
+      - name: Resolve github actions image digest
+        id: resolve_githubactions_arch_digest
+        run: |
+          DIGEST=$(docker buildx imagetools inspect "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-${DOCKER_TAG}-${ARCHITECTURE}" | awk '/^Digest:/ {print $2; exit}')
+          echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "Resolved digest ${DIGEST} for githubactions-${DOCKER_TAG}-${ARCHITECTURE}"
+        env:
+          DOCKER_TAG: ${{ inputs.docker_tag }}
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          ARCHITECTURE: '${{ matrix.arch }}'
+      - name: Attest github actions image
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a
+        with:
+          subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
+          subject-digest: ${{ steps.resolve_githubactions_arch_digest.outputs.digest }}
+          push-to-registry: false
+      - name: Summarise attested github actions image
+        run: |
+          echo "## ATTESTED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-${DOCKER_TAG}-${ARCHITECTURE}@${DIGEST}" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          DOCKER_TAG: ${{ inputs.docker_tag }}
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          ARCHITECTURE: '${{ matrix.arch }}'
+          DIGEST: ${{ steps.resolve_githubactions_arch_digest.outputs.digest }}
       - name: Push latest image
         if: ${{ inputs.tag_latest }}
         run: |
@@ -152,6 +202,56 @@ jobs:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'
           ARCHITECTURE: '${{ matrix.arch }}'
+      - name: Resolve github actions latest image digest
+        if: ${{ inputs.tag_latest }}
+        id: resolve_githubactions_latest_arch_digest
+        run: |
+          DIGEST=$(docker buildx imagetools inspect "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-latest-${ARCHITECTURE}" | awk '/^Digest:/ {print $2; exit}')
+          echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "Resolved digest ${DIGEST} for githubactions-latest-${ARCHITECTURE}"
+        env:
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          ARCHITECTURE: '${{ matrix.arch }}'
+      - name: Attest github actions latest image
+        if: ${{ inputs.tag_latest }}
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a
+        with:
+          subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
+          subject-digest: ${{ steps.resolve_githubactions_latest_arch_digest.outputs.digest }}
+          push-to-registry: false
+      - name: Summarise attested github actions latest image
+        if: ${{ inputs.tag_latest }}
+        run: |
+          echo "## ATTESTED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-latest-${ARCHITECTURE}@${DIGEST}" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          ARCHITECTURE: '${{ matrix.arch }}'
+          DIGEST: ${{ steps.resolve_githubactions_latest_arch_digest.outputs.digest }}
+      - name: Resolve latest image digest
+        if: ${{ inputs.tag_latest }}
+        id: resolve_latest_arch_digest
+        run: |
+          DIGEST=$(docker buildx imagetools inspect "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-${ARCHITECTURE}" | awk '/^Digest:/ {print $2; exit}')
+          echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "Resolved digest ${DIGEST} for latest-${ARCHITECTURE}"
+        env:
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          ARCHITECTURE: '${{ matrix.arch }}'
+      - name: Attest latest image
+        if: ${{ inputs.tag_latest }}
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a
+        with:
+          subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
+          subject-digest: ${{ steps.resolve_latest_arch_digest.outputs.digest }}
+          push-to-registry: false
+      - name: Summarise attested latest image
+        if: ${{ inputs.tag_latest }}
+        run: |
+          echo "## ATTESTED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest-${ARCHITECTURE}@${DIGEST}" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          ARCHITECTURE: '${{ matrix.arch }}'
+          DIGEST: ${{ steps.resolve_latest_arch_digest.outputs.digest }}
   publish_combined_image:
     name: Publish combined image for ${{ inputs.container_name }}
     runs-on: ubuntu-22.04
@@ -222,3 +322,101 @@ jobs:
         env:
           DOCKER_TAG: ${{ inputs.docker_tag }}
           CONTAINER_NAME: '${{ inputs.container_name }}'
+
+      - name: Resolve combined image digest
+        id: resolve_combined_digest
+        run: |
+          DIGEST=$(docker buildx imagetools inspect "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}" | awk '/^Digest:/ {print $2; exit}')
+          echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "Resolved digest ${DIGEST} for ${DOCKER_TAG}"
+        env:
+          DOCKER_TAG: ${{ inputs.docker_tag }}
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+
+      - name: Attest combined image
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a
+        with:
+          subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
+          subject-digest: ${{ steps.resolve_combined_digest.outputs.digest }}
+          push-to-registry: false
+      - name: Summarise attested combined image
+        run: |
+          echo "## ATTESTED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}@${DIGEST}" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          DOCKER_TAG: ${{ inputs.docker_tag }}
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          DIGEST: ${{ steps.resolve_combined_digest.outputs.digest }}
+
+      - name: Resolve combined github actions image digest
+        id: resolve_githubactions_combined_digest
+        run: |
+          DIGEST=$(docker buildx imagetools inspect "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-${DOCKER_TAG}" | awk '/^Digest:/ {print $2; exit}')
+          echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "Resolved digest ${DIGEST} for githubactions-${DOCKER_TAG}"
+        env:
+          DOCKER_TAG: ${{ inputs.docker_tag }}
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+
+      - name: Attest combined github actions image
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a
+        with:
+          subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
+          subject-digest: ${{ steps.resolve_githubactions_combined_digest.outputs.digest }}
+          push-to-registry: false
+      - name: Summarise attested combined github actions image
+        run: |
+          echo "## ATTESTED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-${DOCKER_TAG}@${DIGEST}" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          DOCKER_TAG: ${{ inputs.docker_tag }}
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          DIGEST: ${{ steps.resolve_githubactions_combined_digest.outputs.digest }}
+
+      - name: Resolve latest github actions image digest
+        if: ${{ inputs.tag_latest }}
+        id: resolve_githubactions_latest_digest
+        run: |
+          DIGEST=$(docker buildx imagetools inspect "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-latest" | awk '/^Digest:/ {print $2; exit}')
+          echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "Resolved digest ${DIGEST} for githubactions-latest"
+        env:
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+
+      - name: Attest latest github actions image
+        if: ${{ inputs.tag_latest }}
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a
+        with:
+          subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
+          subject-digest: ${{ steps.resolve_githubactions_latest_digest.outputs.digest }}
+          push-to-registry: false
+      - name: Summarise attested latest github actions image
+        if: ${{ inputs.tag_latest }}
+        run: |
+          echo "## ATTESTED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:githubactions-latest@${DIGEST}" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          DIGEST: ${{ steps.resolve_githubactions_latest_digest.outputs.digest }}
+
+      - name: Resolve latest image digest
+        if: ${{ inputs.tag_latest }}
+        id: resolve_latest_digest
+        run: |
+          DIGEST=$(docker buildx imagetools inspect "ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest" | awk '/^Digest:/ {print $2; exit}')
+          echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "Resolved digest ${DIGEST} for latest"
+        env:
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+
+      - name: Attest latest image
+        if: ${{ inputs.tag_latest }}
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a
+        with:
+          subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
+          subject-digest: ${{ steps.resolve_latest_digest.outputs.digest }}
+          push-to-registry: false
+      - name: Summarise attested latest image
+        if: ${{ inputs.tag_latest }}
+        run: |
+          echo "## ATTESTED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:latest@${DIGEST}" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          CONTAINER_NAME: '${{ inputs.container_name }}'
+          DIGEST: ${{ steps.resolve_latest_digest.outputs.digest }}
