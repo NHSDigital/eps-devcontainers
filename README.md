@@ -23,7 +23,7 @@ EPS DEV CONTAINERS
 
 # Introduction
 This repository contains code to build VS Code devcontainers that can be used as a base image for all EPS projects.   
-Images are built for AMD64 and ARM64, and a manifest file is created that can be pulled for both architectures. This is then pushed to GitHub Container Registry.    
+Images are built for AMD64 and ARM64, and a manifest file is created that can be pulled for both architectures. This is then pushed to GitHub Container Registry and an attestation created that can be used to verify the images before being used.      
 Images are built using https://github.com/devcontainers/cli.   
 
 We build a base image based on mcr.microsoft.com/devcontainers/base:ubuntu-22.04 that other images are then based on
