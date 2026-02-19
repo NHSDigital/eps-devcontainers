@@ -108,13 +108,20 @@ This job should be used in github actions wherever you need to get the dev conta
           echo "DEVCONTAINER_IMAGE_VERSION=$DEVCONTAINER_VERSION" >> "$GITHUB_OUTPUT"
 ```
 ## Using images in github actions
-To use the image in github actions, you can use code like this
+To use the image in github actions, you should first verify the attestation of the image and reference the image by the digest
+For ci and release pipelines, you should set verify_published_from_main_image to ensure that only images published from main are used.   
 ```
 jobs:
+  verify_attestation:
+    uses: NHSDigital/eps-common-workflows/.github/workflows/verify-attestation.yml@<latest published version>
+    with:
+      runtime_docker_image: "${{ inputs.runtime_docker_image }}"
+      verify_published_from_main_image: false
   my_job_name:
     runs-on: ubuntu-22.04
+    needs: verify_attestation
     container:
-      image: ghcr.io/nhsdigital/eps-devcontainers/<container name>:githubactions-<tag>
+      image: ${{ needs.verify_attestation.outputs.pinned_image }}
       options: --user 1001:1001 --group-add 128
     defaults:
       run:
