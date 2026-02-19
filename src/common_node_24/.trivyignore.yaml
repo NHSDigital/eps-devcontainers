@@ -35,3 +35,9 @@ vulnerabilities:
     purls:
       - "pkg:npm/tar@7.5.1"
     expired_at: 2026-08-18
+  - id: CVE-2026-26996
+    statement: "minimatch has a ReDoS via repeated wildcards with non-matching literal in pattern"
+    purls:
+      - "pkg:npm/minimatch@10.0.3"
+      - "pkg:npm/minimatch@9.0.5"
+    expired_at: 2026-08-19
