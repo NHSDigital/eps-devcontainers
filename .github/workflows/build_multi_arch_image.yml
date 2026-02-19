@@ -153,7 +153,7 @@ jobs:
         with:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_arch_digest.outputs.digest }}
-          push-to-registry: false
+          push-to-registry: true
       - name: Summarise attested image
         run: |
           echo "## ATTESTED IMAGE : ghcr.io/nhsdigital/eps-devcontainers/${CONTAINER_NAME}:${DOCKER_TAG}-${ARCHITECTURE}@${DIGEST}" >> "$GITHUB_STEP_SUMMARY"
