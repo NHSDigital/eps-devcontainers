@@ -108,24 +108,15 @@ IMAGE_NAME and IMAGE_VERSION should be changed as appropriate.
 You should not need to add any features as these are already baked into the image
 
 ## Getting image name and version in GitHub Actions
-This job should be used in GitHub Actions wherever you need to get the dev container name or tag
+This shared workflow should be used in GitHub Actions wherever you need to get the dev container name or tag.
+
+verify_published_from_main_image should be set to false for testing pull request images.
 
 ```
   get_config_values:
-    runs-on: ubuntu-22.04
-    outputs:
-      devcontainer_image_name: ${{ steps.load-config.outputs.DEVCONTAINER_IMAGE_NAME }}
-      devcontainer_image_version: ${{ steps.load-config.outputs.DEVCONTAINER_VERSION }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-      - name: Load config value
-        id: load-config
-        run: |
-          DEVCONTAINER_IMAGE_NAME=$(jq -r '.build.args.IMAGE_NAME' .devcontainer/devcontainer.json)
-          DEVCONTAINER_IMAGE_VERSION=$(jq -r '.build.args.IMAGE_VERSION' .devcontainer/devcontainer.json)
-          echo "DEVCONTAINER_IMAGE_NAME=$DEVCONTAINER_IMAGE_NAME" >> "$GITHUB_OUTPUT"
-          echo "DEVCONTAINER_IMAGE_VERSION=$DEVCONTAINER_VERSION" >> "$GITHUB_OUTPUT"
+    uses: NHSDigital/eps-common-workflows/.github/workflows/get-repo-config.yml@8404cf6e3a61ac8de4d1644e175e288aa4965815
+    with:
+      verify_published_from_main_image: false
 ```
 ## Using images in GitHub Actions
 To use the image in GitHub Actions, you should first verify the attestation of the image and reference the image by the digest
