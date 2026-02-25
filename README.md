@@ -123,16 +123,11 @@ To use the image in GitHub Actions, you should first verify the attestation of t
 For CI and release pipelines, you should set verify_published_from_main_image to ensure that only images published from main are used.   
 ```
 jobs:
-  verify_attestation:
-    uses: NHSDigital/eps-common-workflows/.github/workflows/verify-attestation.yml@<latest published version>
-    with:
-      runtime_docker_image: "${{ inputs.runtime_docker_image }}"
-      verify_published_from_main_image: false
   my_job_name:
     runs-on: ubuntu-22.04
-    needs: verify_attestation
+    needs: get_config_values
     container:
-      image: ${{ needs.verify_attestation.outputs.pinned_image }}
+      image: ${{ needs.get_config_values.outputs.pinned_image }}
       options: --user 1001:1001 --group-add 128
     defaults:
       run:
@@ -144,7 +139,6 @@ jobs:
       ... other steps ....
 ```
 It is important that:
-- the image specified uses the tag starting githubactions-
 - there is `options: --user 1001:1001 --group-add 128` below image to ensure it uses the correct user id and is added to the docker group
 - the default shell is set to be bash
 - the first step copies .tool-versions from /home/vscode to $HOME/.tool-versions
