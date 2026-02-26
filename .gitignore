@@ -3,3 +3,4 @@ node_modules/
 src/base/.devcontainer/language_versions/
 .trivyignore_combined.yaml
 .out/
+.envrc
