@@ -41,3 +41,15 @@ vulnerabilities:
       - "pkg:npm/minimatch@10.0.3"
       - "pkg:npm/minimatch@9.0.5"
     expired_at: 2026-08-19
+  - id: CVE-2026-27903
+    statement: "minimatch is a minimal matching utility for converting glob expression ..."
+    purls:
+      - "pkg:npm/minimatch@10.0.3"
+      - "pkg:npm/minimatch@9.0.5"
+    expired_at: 2026-08-27
+  - id: CVE-2026-27904
+    statement: "minimatch is a minimal matching utility for converting glob expression ..."
+    purls:
+      - "pkg:npm/minimatch@10.0.3"
+      - "pkg:npm/minimatch@9.0.5"
+    expired_at: 2026-08-27
