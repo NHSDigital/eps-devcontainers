@@ -105,3 +105,8 @@ vulnerabilities:
     purls:
       - "pkg:deb/ubuntu/firefox@147.0.4%2Bbuild1-0ubuntu0.22.04.1~mt1?arch=amd64&distro=ubuntu-22.04"
     expired_at: 2026-08-16
+  - id: CVE-2026-24051
+    statement: "OpenTelemetry Go SDK Vulnerable to Arbitrary Code Execution via PATH Hijacking"
+    purls:
+      - "pkg:golang/go.opentelemetry.io/otel/sdk@v1.38.0"
+    expired_at: 2026-09-10
