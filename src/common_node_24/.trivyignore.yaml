@@ -58,3 +58,8 @@ vulnerabilities:
     purls:
       - "pkg:npm/tar@7.5.1"
     expired_at: 2026-09-09
+  - id: CVE-2026-31802
+    statement: "node-tar is a full-featured Tar for Node.js. Prior to version 7.5.10,  ..."
+    purls:
+      - "pkg:npm/tar@7.5.1"
+    expired_at: 2026-09-09
