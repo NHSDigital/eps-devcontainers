@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-asdf plugin add python
-asdf plugin add poetry https://github.com/asdf-community/asdf-poetry.git
 asdf plugin add golang
 asdf plugin add golangci-lint
 
-asdf install python
 asdf install
 
 # install cfn-lint
