@@ -41,7 +41,7 @@ jobs:
             runner: ubuntu-22.04-arm
     steps:
       - name: Free Disk Space for Docker
-        uses: endersonmenezes/free-disk-space@e6ed9b02e683a3b55ed0252f1ee469ce3b39a885
+        uses: endersonmenezes/free-disk-space@7901478139cff6e9d44df5972fd8ab8fcade4db1
         with:
           remove_android: true
           remove_dotnet: true
@@ -54,7 +54,7 @@ jobs:
             dotnet-sdk-*
           remove_packages_one_command: true
       - name: Login to github container registry
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2
         with:
               registry: ghcr.io
               username: ${{github.actor}}
@@ -66,9 +66,9 @@ jobs:
       - name: setup trivy
         uses: aquasecurity/setup-trivy@3fb12ec12f41e471780db15c232d5dd185dcb514
         with:
-          version: v0.69.1
+          version: v0.69.3
       - name: setup node
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
         with:
           node-version-file: .tool-versions
   
@@ -98,7 +98,7 @@ jobs:
           IMAGE_TAG: "${{ inputs.docker_tag }}-${{ matrix.arch }}"
           EXIT_CODE: 0
           EXTRA_COMMON: "${{ inputs.extra_common }}"
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         name: Upload scan results
         with:
           name: "scan_results_docker_${{ inputs.container_name }}_${{ matrix.arch }}.json"
@@ -149,7 +149,7 @@ jobs:
           CONTAINER_NAME: '${{ inputs.container_name }}'
           ARCHITECTURE: '${{ matrix.arch }}'
       - name: Attest image
-        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32
         with:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_arch_digest.outputs.digest }}
@@ -173,7 +173,7 @@ jobs:
           CONTAINER_NAME: '${{ inputs.container_name }}'
           ARCHITECTURE: '${{ matrix.arch }}'
       - name: Attest github actions image
-        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32
         with:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_githubactions_arch_digest.outputs.digest }}
@@ -214,7 +214,7 @@ jobs:
           ARCHITECTURE: '${{ matrix.arch }}'
       - name: Attest github actions latest image
         if: ${{ inputs.tag_latest }}
-        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32
         with:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_githubactions_latest_arch_digest.outputs.digest }}
@@ -239,7 +239,7 @@ jobs:
           ARCHITECTURE: '${{ matrix.arch }}'
       - name: Attest latest image
         if: ${{ inputs.tag_latest }}
-        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32
         with:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_latest_arch_digest.outputs.digest }}
@@ -263,7 +263,7 @@ jobs:
       id-token: write
     steps:
       - name: Login to github container registry
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2
         with:
               registry: ghcr.io
               username: ${{github.actor}}
@@ -334,7 +334,7 @@ jobs:
           CONTAINER_NAME: '${{ inputs.container_name }}'
 
       - name: Attest combined image
-        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32
         with:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_combined_digest.outputs.digest }}
@@ -358,7 +358,7 @@ jobs:
           CONTAINER_NAME: '${{ inputs.container_name }}'
 
       - name: Attest combined github actions image
-        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32
         with:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_githubactions_combined_digest.outputs.digest }}
@@ -383,7 +383,7 @@ jobs:
 
       - name: Attest latest github actions image
         if: ${{ inputs.tag_latest }}
-        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32
         with:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_githubactions_latest_digest.outputs.digest }}
@@ -408,7 +408,7 @@ jobs:
 
       - name: Attest latest image
         if: ${{ inputs.tag_latest }}
-        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32
         with:
           subject-name: ghcr.io/nhsdigital/eps-devcontainers/${{ inputs.container_name }}
           subject-digest: ${{ steps.resolve_latest_digest.outputs.digest }}

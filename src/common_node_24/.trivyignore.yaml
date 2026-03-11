@@ -53,3 +53,43 @@ vulnerabilities:
       - "pkg:npm/minimatch@10.0.3"
       - "pkg:npm/minimatch@9.0.5"
     expired_at: 2026-08-27
+  - id: CVE-2026-29786
+    statement: "node-tar is a full-featured Tar for Node.js. Prior to version 7.5.10,  ..."
+    purls:
+      - "pkg:npm/tar@7.5.1"
+    expired_at: 2026-09-09
+  - id: CVE-2026-31802
+    statement: "node-tar is a full-featured Tar for Node.js. Prior to version 7.5.10,  ..."
+    purls:
+      - "pkg:npm/tar@7.5.1"
+    expired_at: 2026-09-09
+  - id: CVE-2026-26996
+    statement: "minimatch: minimatch: Denial of Service via specially crafted glob patterns"
+    purls:
+      - "pkg:npm/minimatch@10.1.2"
+    expired_at: 2026-09-11
+  - id: CVE-2026-27903
+    statement: "minimatch: minimatch: Denial of Service due to unbounded recursive backtracking via crafted glob patterns"
+    purls:
+      - "pkg:npm/minimatch@10.1.2"
+    expired_at: 2026-09-11
+  - id: CVE-2026-27904
+    statement: "minimatch: Minimatch: Denial of Service via catastrophic backtracking in glob expressions"
+    purls:
+      - "pkg:npm/minimatch@10.1.2"
+    expired_at: 2026-09-11
+  - id: CVE-2026-26960
+    statement: "tar: node-tar: node-tar: Arbitrary file read/write via malicious archive hardlink creation"
+    purls:
+      - "pkg:npm/tar@7.5.7"
+    expired_at: 2026-09-11
+  - id: CVE-2026-29786
+    statement: "node-tar: hardlink path traversal via drive-relative linkpath"
+    purls:
+      - "pkg:npm/tar@7.5.7"
+    expired_at: 2026-09-11
+  - id: CVE-2026-31802
+    statement: "node-tar Symlink Path Traversal via Drive-Relative Linkpath"
+    purls:
+      - "pkg:npm/tar@7.5.7"
+    expired_at: 2026-09-11
