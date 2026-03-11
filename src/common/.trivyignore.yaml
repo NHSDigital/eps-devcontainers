@@ -360,3 +360,30 @@ vulnerabilities:
     purls:
       - "pkg:deb/ubuntu/linux-libc-dev@5.15.0-170.180?arch=amd64&distro=ubuntu-22.04"
     expired_at: 2026-09-09
+  - id: CVE-2026-25679
+    statement: "url.Parse insufficiently validated the host/authority component and ac ..."
+    purls:
+      - "pkg:golang/stdlib@v1.16.15"
+      - "pkg:golang/stdlib@v1.23.4"
+      - "pkg:golang/stdlib@v1.24.4"
+      - "pkg:golang/stdlib@v1.24.9"
+      - "pkg:golang/stdlib@v1.25.5"
+      - "pkg:golang/stdlib@v1.25.7"
+      - "pkg:golang/stdlib@v1.26.0"
+    expired_at: 2026-09-11
+  - id: CVE-2026-27142
+    statement: "Actions which insert URLs into the content attribute of HTML meta tags ..."
+    purls:
+      - "pkg:golang/stdlib@v1.16.15"
+      - "pkg:golang/stdlib@v1.23.4"
+      - "pkg:golang/stdlib@v1.24.4"
+      - "pkg:golang/stdlib@v1.24.9"
+      - "pkg:golang/stdlib@v1.25.5"
+      - "pkg:golang/stdlib@v1.25.7"
+      - "pkg:golang/stdlib@v1.26.0"
+    expired_at: 2026-09-11
+  - id: CVE-2026-27137
+    statement: "When verifying a certificate chain which contains a certificate contai ..."
+    purls:
+      - "pkg:golang/stdlib@v1.26.0"
+    expired_at: 2026-09-11
