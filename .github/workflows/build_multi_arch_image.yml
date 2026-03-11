@@ -98,7 +98,7 @@ jobs:
           IMAGE_TAG: "${{ inputs.docker_tag }}-${{ matrix.arch }}"
           EXIT_CODE: 0
           EXTRA_COMMON: "${{ inputs.extra_common }}"
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         name: Upload scan results
         with:
           name: "scan_results_docker_${{ inputs.container_name }}_${{ matrix.arch }}.json"
