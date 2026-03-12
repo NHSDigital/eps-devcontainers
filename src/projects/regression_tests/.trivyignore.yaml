@@ -1,0 +1,75 @@
+vulnerabilities:
+  - id: GHSA-72hv-8253-57qq
+    statement: "jackson-core: Number Length Constraint Bypass in Async Parser Leads to Potential DoS Condition"
+    purls:
+      - "pkg:maven/com.fasterxml.jackson.core/jackson-core@2.21.0"
+    expired_at: 2026-09-12
+  - id: CVE-2026-25547
+    statement: "brace-expansion: brace-expansion: Denial of Service via unbounded brace range expansion"
+    purls:
+      - "pkg:npm/%40isaacs/brace-expansion@5.0.0"
+    expired_at: 2026-09-12
+  - id: CVE-2025-64756
+    statement: "glob: glob: Command Injection Vulnerability via Malicious Filenames"
+    purls:
+      - "pkg:npm/glob@10.4.5"
+      - "pkg:npm/glob@11.0.3"
+    expired_at: 2026-09-12
+  - id: CVE-2026-26996
+    statement: "minimatch: minimatch: Denial of Service via specially crafted glob patterns"
+    purls:
+      - "pkg:npm/minimatch@10.0.3"
+      - "pkg:npm/minimatch@9.0.5"
+    expired_at: 2026-09-12
+  - id: CVE-2026-27903
+    statement: "minimatch: minimatch: Denial of Service due to unbounded recursive backtracking via crafted glob patterns"
+    purls:
+      - "pkg:npm/minimatch@10.0.3"
+      - "pkg:npm/minimatch@9.0.5"
+    expired_at: 2026-09-12
+  - id: CVE-2026-27904
+    statement: "minimatch: Minimatch: Denial of Service via catastrophic backtracking in glob expressions"
+    purls:
+      - "pkg:npm/minimatch@10.0.3"
+      - "pkg:npm/minimatch@9.0.5"
+    expired_at: 2026-09-12
+  - id: CVE-2026-23745
+    statement: "node-tar: tar: node-tar: Arbitrary file overwrite and symlink poisoning via unsanitized linkpaths in archives"
+    purls:
+      - "pkg:npm/tar@7.5.1"
+    expired_at: 2026-09-12
+  - id: CVE-2026-23950
+    statement: "node-tar: tar: node-tar: Arbitrary file overwrite via Unicode path collision race condition"
+    purls:
+      - "pkg:npm/tar@7.5.1"
+    expired_at: 2026-09-12
+  - id: CVE-2026-24842
+    statement: "node-tar: tar: node-tar: Arbitrary file creation via path traversal bypass in hardlink security check"
+    purls:
+      - "pkg:npm/tar@7.5.1"
+    expired_at: 2026-09-12
+  - id: CVE-2026-26960
+    statement: "tar: node-tar: node-tar: Arbitrary file read/write via malicious archive hardlink creation"
+    purls:
+      - "pkg:npm/tar@7.5.1"
+    expired_at: 2026-09-12
+  - id: CVE-2026-29786
+    statement: "node-tar: hardlink path traversal via drive-relative linkpath"
+    purls:
+      - "pkg:npm/tar@7.5.1"
+    expired_at: 2026-09-12
+  - id: CVE-2026-31802
+    statement: "node-tar Symlink Path Traversal via Drive-Relative Linkpath"
+    purls:
+      - "pkg:npm/tar@7.5.1"
+    expired_at: 2026-09-12
+  - id: CVE-2026-25679
+    statement: "url.Parse insufficiently validated the host/authority component and ac ..."
+    purls:
+      - "pkg:golang/stdlib@v1.25.6"
+    expired_at: 2026-09-12
+  - id: CVE-2026-27142
+    statement: "Actions which insert URLs into the content attribute of HTML meta tags ..."
+    purls:
+      - "pkg:golang/stdlib@v1.25.6"
+    expired_at: 2026-09-12
